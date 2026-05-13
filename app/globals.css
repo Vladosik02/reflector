@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------
+   Глобальные базовые стили.
+   Здесь только то, что не выражается через утилиты Tailwind.
+   Все цвета берутся из tailwind.config.ts (брэнд-токены).
+   --------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FAFAF7; /* brand.bg */
+  color: #0A0A0A;             /* brand.ink */
+  font-feature-settings: "ss01", "cv11"; /* немного «премиум»-вариантов Inter */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Тонкая dot-grid подложка для hero — вдохновлено Vercel.
+   Используется через утилиту .dot-grid в Hero.tsx. */
+.dot-grid {
+  background-image: radial-gradient(rgba(10, 10, 10, 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: 0 0;
+}
+
+/* Кастомный скроллбар — нейтральный, не отвлекающий */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E7E6E1;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cfcec8;
+}
