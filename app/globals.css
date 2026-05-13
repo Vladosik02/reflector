@@ -44,8 +44,11 @@ body {
 
 /* Тёплый радиальный spotlight сверху — иллюзия источника света над hero. */
 .hero-spotlight {
-  background:
-    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(255, 255, 255, 0.9), transparent 70%),
+  background: radial-gradient(
+      ellipse 60% 40% at 50% -10%,
+      rgba(255, 255, 255, 0.9),
+      transparent 70%
+    ),
     radial-gradient(ellipse 90% 60% at 50% 100%, rgba(231, 230, 225, 0.45), transparent 70%);
 }
 
@@ -75,8 +78,7 @@ body {
 
 /* Тонкая diagonal-grid для упрощённых секций (опционально). */
 .subtle-grid {
-  background-image:
-    linear-gradient(rgba(10, 10, 10, 0.04) 1px, transparent 1px),
+  background-image: linear-gradient(rgba(10, 10, 10, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(10, 10, 10, 0.04) 1px, transparent 1px);
   background-size: 64px 64px;
   -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 30%, transparent 80%);

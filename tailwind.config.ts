@@ -97,10 +97,8 @@ const config: Config = {
         "ink-mesh":
           "radial-gradient(ellipse 100% 80% at 0% 0%, rgba(91,91,214,0.35), rgba(10,10,10,0) 60%), radial-gradient(ellipse 80% 60% at 100% 100%, rgba(91,91,214,0.18), rgba(10,10,10,0) 55%)",
         /* CTA-кнопка с тонким верхним highlight'ом и нижним углублением. */
-        "ink-cta":
-          "linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)",
-        "accent-cta":
-          "linear-gradient(180deg, #6868dd 0%, #4848C7 100%)",
+        "ink-cta": "linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)",
+        "accent-cta": "linear-gradient(180deg, #6868dd 0%, #4848C7 100%)",
         /* Soft divider — горизонтальный мягкий fade для разделения секций. */
         "soft-divider":
           "linear-gradient(90deg, transparent 0%, rgba(10,10,10,0.08) 20%, rgba(10,10,10,0.08) 80%, transparent 100%)",

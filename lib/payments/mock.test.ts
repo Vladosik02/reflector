@@ -76,10 +76,7 @@ describe("MockPaymentProvider", () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (process.env as any).NODE_ENV = "production";
       await expect(
-        provider.verifyAndParseWebhook(
-          JSON.stringify({ eventId: "x", searchId: "y" }),
-          null,
-        ),
+        provider.verifyAndParseWebhook(JSON.stringify({ eventId: "x", searchId: "y" }), null),
       ).rejects.toThrow(/mock webhook is disabled in production/);
     });
   });
