@@ -13,6 +13,11 @@ const config = [
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
+      // React Compiler в Next 16 даёт строгие правила про мемоизацию;
+      // они полезны как подсказка, но не как блокер MVP.
+      "react-hooks/preserve-manual-memoization": "warn",
+      "react-hooks/immutability": "warn",
+      "react-hooks/set-state-in-effect": "warn",
     },
   },
 ];

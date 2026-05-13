@@ -1,3 +1,4 @@
+import "server-only";
 import { env } from "@/lib/env";
 import { mockProvider } from "./mock";
 import type { FaceMatchProvider } from "./types";
@@ -11,4 +12,12 @@ export function getFaceMatchProvider(): FaceMatchProvider {
   }
 }
 
-export type { FaceMatchProvider, Match, MatchRequest, MatchResponse, MatchSource } from "./types";
+export type {
+  FaceMatchProvider,
+  Match,
+  MatchRequest,
+  MatchResponse,
+  MatchSource,
+  PublicMatch,
+} from "./types";
+export { toPublicMatches } from "./types";

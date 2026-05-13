@@ -1,0 +1,99 @@
+// Prisma schema for Reflector.
+//
+// Минимальный набор для Phase 2.5 (pay-per-search-unlock).
+// Принципы:
+//  - никаких персональных данных без необходимости;
+//  - фото никогда не хранится в БД — только sha256 хэш как seed для детерминированного матчинга;
+//  - unlock — это атомарная запись, идемпотентная по providerEventId.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Гостевая сессия — opaque cookie id. Создаётся лениво при первой записи (не в middleware).
+model AnonymousSession {
+  id        String   @id @db.VarChar(64)
+  createdAt DateTime @default(now())
+  lastSeen  DateTime @updatedAt
+
+  searches Search[]
+  unlocks  Unlock[]
+
+  @@map("anonymous_sessions")
+}
+
+// Поиск двойников — одна загрузка фото.
+// photoHash используется как детерминированный seed для mock-провайдера.
+// Не храним фото и не храним сами match'и — пересчитываем по хэшу.
+model Search {
+  id        String   @id @db.VarChar(36)
+  sessionId String   @db.VarChar(64)
+  session   AnonymousSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  photoHash String   @db.VarChar(64)
+  sources   String[]
+  createdAt DateTime @default(now())
+
+  payments Payment[]
+  unlock   Unlock?
+
+  @@index([sessionId])
+  @@map("searches")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
+// Платёж за разблокировку конкретного Search.
+model Payment {
+  id                String         @id @default(cuid())
+  searchId          String         @db.VarChar(36)
+  search            Search         @relation(fields: [searchId], references: [id], onDelete: Cascade)
+  provider          String         @db.VarChar(32) // "mock" | "stripe" | "yookassa"
+  providerSessionId String?        @db.VarChar(255)
+  status            PaymentStatus  @default(PENDING)
+  amountMinor       Int
+  currency          String         @db.VarChar(8)
+  createdAt         DateTime       @default(now())
+  completedAt       DateTime?
+  metadata          Json?
+
+  @@index([searchId])
+  @@index([providerSessionId])
+  @@map("payments")
+}
+
+// Разблокировка премиум-результатов поиска. Уникальность по searchId — нельзя оплатить дважды.
+// providerEventId — идемпотентность webhook'а: повторная попытка с тем же event id не создаст дубль.
+model Unlock {
+  id              String   @id @default(cuid())
+  sessionId       String   @db.VarChar(64)
+  session         AnonymousSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  searchId        String   @unique @db.VarChar(36)
+  search          Search   @relation(fields: [searchId], references: [id], onDelete: Cascade)
+  providerEventId String   @unique @db.VarChar(255)
+  paymentId       String?  @db.VarChar(32)
+  paidAt          DateTime @default(now())
+
+  @@index([sessionId])
+  @@map("unlocks")
+}
+
+// Журнал обработанных webhook-событий. Запись с UNIQUE eventId блокирует повторную обработку.
+// Хранится отдельно от Unlock, потому что не каждое событие — успешный платёж (есть refund, expired и т.п.).
+model ProcessedWebhookEvent {
+  eventId    String   @id @db.VarChar(255)
+  provider   String   @db.VarChar(32)
+  eventType  String   @db.VarChar(64)
+  receivedAt DateTime @default(now())
+
+  @@map("processed_webhook_events")
+}

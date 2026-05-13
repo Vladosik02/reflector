@@ -1,9 +1,12 @@
+import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { env } from "@/lib/env";
-import { getFaceMatchProvider } from "@/lib/face-match";
+import { getFaceMatchProvider, toPublicMatches } from "@/lib/face-match";
 import type { MatchSource } from "@/lib/face-match";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { readSessionId } from "@/lib/session";
+import { createSearch, ensureAnonymousSession } from "@/lib/unlock-service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +18,11 @@ const sourceSchema = z.enum(["public", "models", "sports", "archive"]);
 const sourcesSchema = z.array(sourceSchema).min(1, "Выберите хотя бы один источник").max(4);
 
 export async function POST(request: Request): Promise<NextResponse> {
+  const sessionId = await readSessionId();
+  if (!sessionId) {
+    return NextResponse.json({ error: "Сессия не инициализирована." }, { status: 401 });
+  }
+
   const ip = getClientIp(request);
   const limit = checkRateLimit(`match:${ip}`, env.RATE_LIMIT_PER_MINUTE);
   if (!limit.allowed) {
@@ -70,21 +78,48 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   const buffer = Buffer.from(await photo.arrayBuffer());
+  const photoHash = createHash("sha256").update(buffer).digest("hex");
 
   try {
+    await ensureAnonymousSession(sessionId);
+    const search = await createSearch({
+      sessionId,
+      photoHash,
+      sources: parsedSources,
+    });
+
     const provider = getFaceMatchProvider();
     const response = await provider.match({
+      photoHash,
       photo: buffer,
       mimeType: photo.type,
       sources: parsedSources,
     });
-    return NextResponse.json(response, {
-      status: 200,
-      headers: {
-        "Cache-Control": "no-store",
-        "X-RateLimit-Remaining": String(limit.remaining),
+
+    // Только что созданный поиск никогда не разблокирован — но возвращаем поле явно
+    // для совместимости с /api/search/[id], который пользуется им же.
+    const unlocked = false;
+    const publicMatches = toPublicMatches(response.matches, unlocked);
+
+    return NextResponse.json(
+      {
+        searchId: search.id,
+        unlocked,
+        matches: publicMatches,
+        retentionSeconds: response.retentionSeconds,
+        unlockPrice: {
+          amountMinor: env.UNLOCK_PRICE_MINOR,
+          currency: env.UNLOCK_CURRENCY,
+        },
       },
-    });
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store",
+          "X-RateLimit-Remaining": String(limit.remaining),
+        },
+      },
+    );
   } catch (err) {
     console.error("Face match failed", err);
     return NextResponse.json(

@@ -4,14 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, Upload, X } from "lucide-react";
 import { upload } from "@/lib/content";
 import { cn } from "@/lib/cn";
-import type { Match, MatchSource } from "@/lib/face-match";
+import type { MatchSource, PublicMatch } from "@/lib/face-match";
 import { Results } from "./Results";
-
-/**
- * Функциональный блок: фильтры (левая колонка) + dropzone (правая).
- * После загрузки фото и нажатия «Найти двойников» отправляет multipart
- * на /api/match и отображает <Results>.
- */
 
 const MAX_BYTES = 15 * 1024 * 1024;
 const ACCEPT = ["image/jpeg", "image/png", "image/webp"];
@@ -19,8 +13,11 @@ const ACCEPT = ["image/jpeg", "image/png", "image/webp"];
 type Status = "idle" | "submitting" | "success" | "error";
 
 interface MatchResponse {
-  matches: Match[];
+  searchId: string;
+  unlocked: boolean;
+  matches: PublicMatch[];
   retentionSeconds: number;
+  unlockPrice: { amountMinor: number; currency: string };
 }
 
 export default function UploadSection() {
@@ -28,11 +25,12 @@ export default function UploadSection() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeFilters, setActiveFilters] = useState<Set<MatchSource>>(
-    () => new Set<MatchSource>(["public"]),
+    () => new Set<MatchSource>(["public", "models", "sports", "archive"]),
   );
   const [isDragging, setIsDragging] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
-  const [matches, setMatches] = useState<Match[] | null>(null);
+  const [response, setResponse] = useState<MatchResponse | null>(null);
+  const [isUnlocking, setIsUnlocking] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -47,7 +45,7 @@ export default function UploadSection() {
     (next: File | null) => {
       setError(null);
       setStatus("idle");
-      setMatches(null);
+      setResponse(null);
 
       if (previewUrl) URL.revokeObjectURL(previewUrl);
 
@@ -94,7 +92,7 @@ export default function UploadSection() {
 
     setError(null);
     setStatus("submitting");
-    setMatches(null);
+    setResponse(null);
 
     const formData = new FormData();
     formData.append("photo", file);
@@ -115,7 +113,7 @@ export default function UploadSection() {
       }
 
       const data = (await res.json()) as MatchResponse;
-      setMatches(data.matches);
+      setResponse(data);
       setStatus("success");
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") return;
@@ -123,6 +121,47 @@ export default function UploadSection() {
       setStatus("error");
     }
   };
+
+  const handleUnlock = async () => {
+    if (!response) return;
+    setIsUnlocking(true);
+    try {
+      const res = await fetch("/api/unlock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ searchId: response.searchId }),
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        setError(body.error ?? "Не удалось начать оплату.");
+        setIsUnlocking(false);
+        return;
+      }
+      const data = (await res.json()) as { checkoutUrl?: string; alreadyUnlocked?: boolean };
+      if (data.alreadyUnlocked) {
+        await refresh();
+        setIsUnlocking(false);
+        return;
+      }
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+      setIsUnlocking(false);
+    } catch {
+      setError("Не удалось связаться с платёжным сервисом.");
+      setIsUnlocking(false);
+    }
+  };
+
+  const refresh = useCallback(async () => {
+    if (!response) return;
+    const res = await fetch(`/api/search/${response.searchId}`, { cache: "no-store" });
+    if (res.ok) {
+      const fresh = (await res.json()) as MatchResponse;
+      setResponse(fresh);
+    }
+  }, [response]);
 
   const isSubmitting = status === "submitting";
 
@@ -139,12 +178,14 @@ export default function UploadSection() {
           <aside className="rounded-card border border-brand-line bg-brand-bg p-6">
             <h3 className="text-sm font-semibold text-brand-ink">Источники поиска</h3>
             <p className="mt-2 text-xs text-brand-subtle">
-              Выберите, где искать совпадения. В платных тарифах доступно больше источников.
+              Публичная база — бесплатно. Премиум-источники (модели, спорт, архивы) — за фикс. цену,
+              разово, без подписки.
             </p>
 
             <div className="mt-5 space-y-2">
               {upload.filters.map((f) => {
                 const active = activeFilters.has(f.id);
+                const isPremium = f.id !== "public";
                 return (
                   <label
                     key={f.id}
@@ -155,7 +196,14 @@ export default function UploadSection() {
                         : "border-brand-line text-brand-muted hover:border-brand-ink/40",
                     )}
                   >
-                    <span>{f.label}</span>
+                    <span className="flex items-center gap-2">
+                      {f.label}
+                      {isPremium && (
+                        <span className="rounded-full bg-brand-warning/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-brand-warning">
+                          Премиум
+                        </span>
+                      )}
+                    </span>
                     <input
                       type="checkbox"
                       checked={active}
@@ -169,8 +217,8 @@ export default function UploadSection() {
             </div>
 
             <p className="mt-6 rounded-btn border border-brand-line bg-brand-surface p-3 text-xs leading-relaxed text-brand-muted">
-              Часть совпадений из уникальных источников доступна только&nbsp;
-              <span className="font-medium text-brand-warning">24 часа</span>.
+              Премиум-источники сначала возвращаются <span className="font-medium">размытыми</span>.
+              Один платёж — и все размытые совпадения этого поиска становятся видимыми.
             </p>
           </aside>
 
@@ -266,8 +314,16 @@ export default function UploadSection() {
         </div>
 
         {status === "submitting" && <ResultsSkeleton />}
-        {status === "success" && matches && previewUrl && (
-          <Results userPhotoUrl={previewUrl} matches={matches} />
+        {status === "success" && response && previewUrl && (
+          <Results
+            searchId={response.searchId}
+            userPhotoUrl={previewUrl}
+            matches={response.matches}
+            unlocked={response.unlocked}
+            unlockPrice={response.unlockPrice}
+            onUnlockClick={handleUnlock}
+            isUnlocking={isUnlocking}
+          />
         )}
         {status === "idle" && !file && <ResultsPlaceholder />}
       </div>
@@ -300,8 +356,8 @@ function ResultsPlaceholder() {
     <div className="mt-10 rounded-card border border-brand-line bg-brand-bg p-6">
       <p className="text-sm font-semibold text-brand-ink">Результаты появятся здесь</p>
       <p className="mt-1 text-xs text-brand-subtle">
-        Загрузите фото — и сразу под этим блоком отобразится топ совпадений с процентом сходства и
-        сравнением плечо-к-плечу.
+        Загрузите фото — увидите топ совпадений сразу. Премиум-источники придут размытыми;
+        разблокируете одной оплатой за фикс. цену.
       </p>
       <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
         {[1, 2, 3, 4].map((n) => (

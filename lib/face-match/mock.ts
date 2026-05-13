@@ -1,7 +1,10 @@
-import { createHash } from "node:crypto";
+import "server-only";
+import { getBlurhashForPublicAsset } from "@/lib/blur";
 import type { FaceMatchProvider, Match, MatchRequest, MatchResponse, MatchSource } from "./types";
 
-const CATALOG: Array<Omit<Match, "similarity" | "expiresAt">> = [
+const PREMIUM_SOURCES: ReadonlySet<MatchSource> = new Set(["models", "sports", "archive"]);
+
+const CATALOG: Array<Omit<Match, "similarity" | "expiresAt" | "blurhash" | "gated">> = [
   { id: "p-1", name: "Алексей В., актёр", source: "public", imageUrl: "/mock/p1.svg" },
   { id: "p-2", name: "Мария К., певица", source: "public", imageUrl: "/mock/p2.svg" },
   { id: "p-3", name: "Дмитрий Л., телеведущий", source: "public", imageUrl: "/mock/p3.svg" },
@@ -14,16 +17,21 @@ const CATALOG: Array<Omit<Match, "similarity" | "expiresAt">> = [
 ];
 
 /**
- * Детерминированный мок: одинаковые байты на входе → одинаковый порядок
- * совпадений. Это удобно для разработки UI и тестов.
+ * Детерминированный мок: одинаковые байты на входе → одинаковый порядок матчей.
+ * Это нужно для двух вещей:
+ *  - Воспроизводимое end-to-end тестирование unlock-флоу.
+ *  - Возможность пересчитать матчи из photoHash, не храня само фото.
  */
 export const mockProvider: FaceMatchProvider = {
   name: "mock",
   async match(request: MatchRequest): Promise<MatchResponse> {
-    const seed = createHash("sha256").update(request.photo).digest();
-    const sources = new Set<MatchSource>(request.sources);
+    const seed = Buffer.from(request.photoHash, "hex");
+    if (seed.length !== 32) {
+      throw new Error("mockProvider: photoHash must be a 64-char hex sha256");
+    }
+    const allowed = new Set<MatchSource>(request.sources);
 
-    const ranked = CATALOG.filter((m) => sources.has(m.source))
+    const ranked = CATALOG.filter((m) => allowed.has(m.source))
       .map((m, idx) => {
         const seedByte = seed[idx % seed.length] ?? 0;
         const jitter = seedByte / 255;
@@ -34,17 +42,20 @@ export const mockProvider: FaceMatchProvider = {
 
     const top = ranked.slice(0, 6);
 
-    const matches: Match[] = top.map((m) => {
-      if (m.source === "models" || m.source === "archive") {
-        return {
+    const matches: Match[] = await Promise.all(
+      top.map(async (m) => {
+        const gated = PREMIUM_SOURCES.has(m.source);
+        const base: Match = {
           ...m,
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          gated,
         };
-      }
-      return m;
-    });
-
-    await delay(450);
+        if (gated) {
+          base.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+          base.blurhash = await getBlurhashForPublicAsset(m.imageUrl);
+        }
+        return base;
+      }),
+    );
 
     return {
       matches,
@@ -55,8 +66,4 @@ export const mockProvider: FaceMatchProvider = {
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
-}
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

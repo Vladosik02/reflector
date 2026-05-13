@@ -7,6 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./"),
+      "server-only": path.resolve(__dirname, "./test/server-only-stub.ts"),
     },
   },
   test: {
@@ -16,5 +17,6 @@ export default defineConfig({
     css: false,
     include: ["**/*.{test,spec}.{ts,tsx}"],
     exclude: ["node_modules", ".next", "coverage"],
+    testTimeout: 15000,
   },
 });

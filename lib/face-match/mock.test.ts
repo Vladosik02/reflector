@@ -1,12 +1,13 @@
+import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { mockProvider } from "./mock";
 
-const SAMPLE = Buffer.from("fake-image-bytes", "utf8");
+const SAMPLE_HASH = createHash("sha256").update("fake-image-bytes").digest("hex");
 
 describe("mockProvider", () => {
   it("returns matches sorted by similarity desc", async () => {
     const res = await mockProvider.match({
-      photo: SAMPLE,
+      photoHash: SAMPLE_HASH,
       mimeType: "image/jpeg",
       sources: ["public", "models", "sports", "archive"],
     });
@@ -19,7 +20,7 @@ describe("mockProvider", () => {
 
   it("respects requested sources", async () => {
     const res = await mockProvider.match({
-      photo: SAMPLE,
+      photoHash: SAMPLE_HASH,
       mimeType: "image/jpeg",
       sources: ["public"],
     });
@@ -29,27 +30,44 @@ describe("mockProvider", () => {
     }
   });
 
-  it("marks models and archive results as limited with future expiresAt", async () => {
+  it("marks premium sources as gated with blurhash and expiresAt", async () => {
     const res = await mockProvider.match({
-      photo: SAMPLE,
+      photoHash: SAMPLE_HASH,
       mimeType: "image/jpeg",
       sources: ["models", "archive"],
     });
 
     for (const m of res.matches) {
+      expect(m.gated).toBe(true);
+      expect(m.blurhash).toBeDefined();
+      expect(m.blurhash!.length).toBeGreaterThan(20);
       expect(m.expiresAt).toBeDefined();
       expect(new Date(m.expiresAt!).getTime()).toBeGreaterThan(Date.now());
     }
   });
 
+  it("leaves public source matches non-gated and without blurhash", async () => {
+    const res = await mockProvider.match({
+      photoHash: SAMPLE_HASH,
+      mimeType: "image/jpeg",
+      sources: ["public"],
+    });
+
+    for (const m of res.matches) {
+      expect(m.gated).toBe(false);
+      expect(m.blurhash).toBeUndefined();
+      expect(m.expiresAt).toBeUndefined();
+    }
+  });
+
   it("is deterministic for identical inputs", async () => {
     const a = await mockProvider.match({
-      photo: SAMPLE,
+      photoHash: SAMPLE_HASH,
       mimeType: "image/jpeg",
       sources: ["public"],
     });
     const b = await mockProvider.match({
-      photo: SAMPLE,
+      photoHash: SAMPLE_HASH,
       mimeType: "image/jpeg",
       sources: ["public"],
     });
@@ -58,12 +76,13 @@ describe("mockProvider", () => {
     expect(a.matches.map((m) => m.similarity)).toEqual(b.matches.map((m) => m.similarity));
   });
 
-  it("returns sensible TTL", async () => {
-    const res = await mockProvider.match({
-      photo: SAMPLE,
-      mimeType: "image/jpeg",
-      sources: ["public"],
-    });
-    expect(res.retentionSeconds).toBe(24 * 60 * 60);
+  it("rejects non-64-char hex photoHash", async () => {
+    await expect(
+      mockProvider.match({
+        photoHash: "deadbeef",
+        mimeType: "image/jpeg",
+        sources: ["public"],
+      }),
+    ).rejects.toThrow(/photoHash/);
   });
 });
