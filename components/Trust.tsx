@@ -4,13 +4,19 @@ import { trust } from "@/lib/content";
 const ICONS = [Trash2, Sparkles, Lock, ShieldCheck] as const;
 
 /**
- * Trust-секция — privacy-first сигналы. Размещается перед FAQ,
- * чтобы снять барьер «загружать ли мне сюда фото» перед выбором тарифа.
+ * Trust-секция — privacy-first сигналы.
+ * Карточки получают subtle hover-lift, чип иконки — отдельную мини-тень,
+ * чтобы создать вторую плоскость глубины.
  */
 export default function Trust() {
   return (
-    <section id="trust" className="border-t border-brand-line bg-brand-bg">
-      <div className="mx-auto max-w-site px-6 py-16 md:py-24">
+    <section id="trust" className="relative border-t border-brand-line bg-brand-bg">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-soft-divider"
+      />
+
+      <div className="relative mx-auto max-w-site px-6 py-16 md:py-24">
         <div className="max-w-2xl">
           <span className="text-sm font-medium text-brand-accent">{trust.eyebrow}</span>
           <h2 className="mt-3 text-headline text-brand-ink">{trust.title}</h2>
@@ -23,9 +29,9 @@ export default function Trust() {
             return (
               <article
                 key={p.title}
-                className="flex gap-4 rounded-card border border-brand-line bg-brand-surface p-6"
+                className="glass-top relative flex gap-4 rounded-card border border-brand-line bg-brand-surface p-6 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lift"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-btn bg-brand-bg text-brand-accent">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-btn bg-brand-accent-soft text-brand-accent shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_1px_2px_rgba(91,91,214,0.18)]">
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <div>

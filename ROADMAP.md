@@ -16,7 +16,7 @@
 
 ## Текущее состояние
 
-**Стек:** Next.js 16.2.6 (App Router + Turbopack) · React 19.2 · TypeScript 5.9 strict · Tailwind 3.4 · Prisma 6 + Postgres 17 (docker-compose) · Stripe 17 · BlurHash · ESLint 9 flat · Vitest 2 (22 tests).
+**Стек:** Next.js 16.2.6 (App Router + Turbopack) · React 19.2 · TypeScript 5.9 strict · Tailwind 3.4 · Prisma 6 + Postgres 17 (docker-compose) · Stripe 17 · BlurHash · ESLint 9 flat · Vitest 2 (35 tests).
 
 **Что работает end-to-end (с mock-провайдером):**
 
@@ -99,22 +99,23 @@
 
 **Код-фиксы (code-review-агент, should-fix):**
 
-- [ ] `handleWebhookEvent`: при `providerSessionId=null` искать Payment по `(searchId, status=PENDING)` — иначе Prisma пропускает поле и возвращает любой Payment этого search.
-- [ ] `useUnlock(searchId)` — извлечь дублирующий handleUnlock из UploadSection и /search/[id].
-- [ ] Поллинг в `/unlock/success`: AbortController на каждый fetch вместо только `cancelled`-флага.
-- [ ] `app/unlock/cancel/page.tsx` — проверить, что страница действительно есть (security-агент усомнился; на самом деле есть, но добавить e2e-проверку).
+- [x] `handleWebhookEvent`: при `providerSessionId=null` искать Payment по `(searchId, status=PENDING)` — иначе Prisma пропускает поле и возвращает любой Payment этого search.
+- [x] `useUnlock(searchId)` — извлечь дублирующий handleUnlock из UploadSection и /search/[id] → `lib/hooks/useUnlock.ts`.
+- [x] Поллинг в `/unlock/success`: AbortController на каждый fetch вместо только `cancelled`-флага.
+- [x] `app/unlock/cancel/page.tsx` — проверено: страница есть и корректна.
 - [ ] `lib/blur.ts`: LRU bounded cache (сейчас простой Map с capped FIFO — достаточно, но LRU был бы корректнее).
+- [x] `BlurredPreview` — inline `style={filter:'blur(2px)'}` → Tailwind `blur-sm`.
 
 **A11y (a11y-агент, blocker уже закрыт):**
 
 - [x] BlurredPreview aria-label больше не утверждает identity.
 - [x] UnlockBanner обёрнут в `role="status" aria-live="polite"`.
 - [x] /unlock/success имеет live region.
-- [ ] Color contrast: `text-brand-warning` на `bg-brand-warning/15` ниже 4.5:1 — заменить либо текст на `text-brand-ink`, либо фон на `bg-brand-bg`.
-- [ ] `prefers-reduced-motion`: Loader2 / animate-pulse / countdown — обернуть в `motion-safe:`.
-- [ ] Dropzone: динамический `aria-label` после выбора файла; `aria-describedby` ↔ hint; убрать nested interactive (кнопка "Выбрать другое фото" внутри role="button").
-- [ ] Error в `UploadSection` связать с input через `aria-describedby` + `aria-invalid`.
-- [ ] Focus management на `router.replace('/search/[id]')` — поставить tabindex=-1 на h1 и focus().
+- [x] Color contrast: `text-brand-warning` на `bg-brand-warning/15` → `text-brand-ink` (LimitedBadge в Results, премиум-чип в UploadSection).
+- [x] `prefers-reduced-motion`: Hero badge `animate-ping` обёрнут в `motion-safe:`. (Loader2 для loading-states оставлен — индикатор активности.)
+- [x] Dropzone: разнесён на два режима — `<button>` когда пусто, `<div>` когда превью. Nested interactive устранён. `aria-describedby` указывает на hint или error по состоянию.
+- [x] Error в `UploadSection` связан с dropzone через `aria-describedby="upload-error"` + alert-role.
+- [x] Focus management на `/search/[id]` — `tabIndex={-1}` на h1, `focus()` в useEffect при первой загрузке data.
 
 **Security (security-агент, оставшиеся MEDIUM):**
 
@@ -124,10 +125,10 @@
 - [x] HIGH: Rate-limit на /api/unlock, /api/unlock/status, /api/webhooks/[provider].
 - [x] HIGH: Open redirect в /unlock/mock-checkout — sanitize success/cancel URLs к relative path.
 - [x] INFO→HIGH: Production-guard на default SESSION_COOKIE_SECRET.
-- [ ] MEDIUM: `getClientIp` доверяет X-Forwarded-For — fallback на session id при отсутствии trusted proxy.
-- [ ] MEDIUM: Rotate session id на первом успешном unlock.
+- [x] MEDIUM: `getClientIp` теперь требует `TRUST_PROXY_HEADERS=true`, иначе возвращает null. Rate-limit ключи через `getRateLimitKey()` предпочитают signed sessionId (не подделать) над IP. Применено в 4 роутах.
+- [ ] MEDIUM: Rotate session id на первом успешном unlock. **Отложено** — без claim-token не закрывает реальный threat (shared-device): атакующий получает новый cookie вместе с victim'ом. Будет имплементирован вместе с claim-token.
 - [ ] MEDIUM: Stripe raw-body integration test (когда появится мерчант).
-- [ ] MEDIUM: Claim-token в `successUrl` для рекавери unlock'а после очистки cookie.
+- [ ] MEDIUM: Claim-token в `successUrl` для рекавери unlock'а после очистки cookie. Требует миграции (новое поле в Unlock/Payment) — выделено в отдельную задачу.
 
 **Стоит зафиксировать в ENV:**
 
@@ -138,6 +139,7 @@ STRIPE_SECRET_KEY=...
 STRIPE_WEBHOOK_SECRET=...
 DATABASE_URL=postgres://...
 SESSION_COOKIE_SECRET=...
+TRUST_PROXY_HEADERS=true   # включать ТОЛЬКО за известным proxy (Vercel/Cloudflare/nginx)
 ```
 
 ### Фаза 3 · Контент + UX-полировка
@@ -213,3 +215,11 @@ SESSION_COOKIE_SECRET=...
 - **2026-05-13** Апгрейд Next 14.2.5 → 16.2.6, React 18 → 19. Закрыта цепочка из 25+ CVE в Next 14. ESLint 8 → 9 (flat config). Tailwind оставлен на 3.4 (миграция на 4 — отдельная задача, не блокирует прод).
 - **2026-05-13** Решено: лендинг рендерится статически (`prerender`), API-роуты — динамические. Без middleware на этом этапе.
 - **2026-05-13** Зафиксировано: в текущем коде проект всё ещё называется «Doppelganger». Полное переименование на «Reflector» — отложено до этапа платежей/легала, чтобы не делать его дважды.
+- **2026-05-13** Brand-string в UI переименован: `brandName` в `lib/content.ts` теперь `"Reflector"` (Header logo, Footer, copyright). SEO-метаданные в `app/layout.tsx` уже были на «Reflector». В `package.json`/`PLAN.md` имя пакета `doppelganger-app` сохранено — это внутренний идентификатор, переименуем вместе с git-репозиторием на этапе деплоя.
+- **2026-05-13** Depth-design pass: добавлены многослойные тени (`shadow-card`/`lift`/`cta`/`cta-hover`/`ink-lift`/`glow`/`header`), inset-highlight (`glass-top`), atmospheric layers (`hero-spotlight`, `orb-violet`/`orb-warm`, `vignette-bottom`, `dot-grid` с радиальной маской, `subtle-grid`, `soft-divider`). Все секции получили hover-lift, featured Pricing — ambient violet glow + ink-mesh gradient. Mobile orb sizes уменьшены через md:-breakpoints, decorative slои pointer-events:none. prefers-reduced-motion отключает `.orb`/`.animate-subtle-pulse`. Middleware переведён на nodejs runtime — lib/session.ts требует node:crypto.
+- **2026-05-13** Wave-2 фиксы Phase 2.6 (10 агентов в двух волнах: 5 research → 5 verify):
+  - **Code-quality:** `handleWebhookEvent` теперь конструирует where-clause условно (Prisma больше не получает `providerSessionId: undefined` и не возвращает любой Payment); `useUnlock(searchId, options)` хук в `lib/hooks/useUnlock.ts` дедуплицирует handleUnlock из UploadSection и /search/[id]; `/unlock/success` polling переведён на AbortController вместо `cancelled`-флага (включая cleanup setTimeout через abort listener).
+  - **Security:** новый `lib/request.ts` с `getRateLimitKey(routeKey, { sessionId, request })` — предпочитает signed HMAC sessionId (не подделать) над IP; IP читается из XFF только при `TRUST_PROXY_HEADERS=true`. Применено в /api/match, /api/unlock, /api/unlock/status, /api/webhooks/[provider]. Старый локальный `getClientIp` в /api/match удалён.
+  - **A11y:** контраст премиум-меток (LimitedBadge, премиум-чип) переведён на `text-brand-ink` (~14:1 вместо 3.5:1); Hero badge `animate-ping` → `motion-safe:animate-ping`; dropzone перестал быть nested-interactive — `<button>` когда пусто, `<div>` когда превью; error связан с input через `aria-describedby`; /search/[id] h1 получает `tabIndex={-1}` + `focus()` в useEffect.
+  - **Design polish:** featured Pricing получила group/hover-lift + opacity-90 glow; мобильные orb-размеры (Hero h-48/h-56→md:h-72/h-80, Pricing spotlight 260×320→420×520, UploadSection orb hidden md:block); BlurredPreview inline filter → `blur-sm`; UnlockBanner CTA переведён на `bg-ink-cta` + hover-lift.
+  - **Tests:** +13 unit-тестов (35 всего): `lib/face-match/types.test.ts` (5 cases toPublicMatches), `lib/blur.test.ts` (6 cases path-traversal guard), `lib/payments/mock.test.ts` расширен на 2 (URL encoding, production guard).

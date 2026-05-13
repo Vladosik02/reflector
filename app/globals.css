@@ -19,17 +19,92 @@ html {
 body {
   background-color: #fafaf7; /* brand.bg */
   color: #0a0a0a; /* brand.ink */
-  font-feature-settings: "ss01", "cv11"; /* немного «премиум»-вариантов Inter */
+  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
+/* ===============================================================
+   СЛОИ ГЛУБИНЫ
+   Каждая утилита решает одну атмосферную задачу. Комбинируются
+   через absolute-слои с opacity. Все цвета — из брэнд-палитры,
+   ничего «голливудски» яркого.
+   =============================================================== */
+
 /* Тонкая dot-grid подложка для hero — вдохновлено Vercel.
-   Используется через утилиту .dot-grid в Hero.tsx. */
+   Маска делает точки плотнее в центре и растворяет к краям —
+   так подложка ощущается «глубокой», а не как обои. */
 .dot-grid {
-  background-image: radial-gradient(rgba(10, 10, 10, 0.07) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(10, 10, 10, 0.09) 1px, transparent 1px);
   background-size: 22px 22px;
   background-position: 0 0;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+}
+
+/* Тёплый радиальный spotlight сверху — иллюзия источника света над hero. */
+.hero-spotlight {
+  background:
+    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(255, 255, 255, 0.9), transparent 70%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(231, 230, 225, 0.45), transparent 70%);
+}
+
+/* Soft-orb — декоративный размытый цветной круг (для фона hero / featured). */
+.orb {
+  filter: blur(60px);
+  will-change: opacity;
+}
+
+/* Vignette — лёгкое затемнение нижнего края секции, добавляет «глубины кадра». */
+.vignette-bottom {
+  background: linear-gradient(to bottom, transparent 60%, rgba(10, 10, 10, 0.025) 100%);
+}
+
+/* Decorative soft-divider — мягкая горизонтальная линия с затухающими краями.
+   Используется поверх обычной border-t, когда нужно «дороже». */
+.soft-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(10, 10, 10, 0.1) 20%,
+    rgba(10, 10, 10, 0.1) 80%,
+    transparent 100%
+  );
+}
+
+/* Тонкая diagonal-grid для упрощённых секций (опционально). */
+.subtle-grid {
+  background-image:
+    linear-gradient(rgba(10, 10, 10, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10, 10, 10, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 30%, transparent 80%);
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 30%, transparent 80%);
+}
+
+/* «Стеклянная» подсветка по верху карточки. На светлом фоне — почти не видно,
+   но именно она делает поверхность «дорогой» (1px белой линии под краем). */
+.glass-top::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, transparent 30%);
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+
+/* Reduced motion — отключаем декоративные пульсации. */
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .animate-subtle-pulse {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Кастомный скроллбар — нейтральный, не отвлекающий */

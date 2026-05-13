@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
 import { getPaymentProvider } from "@/lib/payments";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getRateLimitKey } from "@/lib/request";
 import { handleWebhookEvent } from "@/lib/unlock-service";
 
 export const runtime = "nodejs";
@@ -26,8 +27,9 @@ export async function POST(
     );
   }
 
-  const ip = request.headers.get("x-real-ip") ?? "unknown";
-  const limit = checkRateLimit(`webhook:${providerName}:${ip}`, 120);
+  // Webhook'и приходят от внешнего провайдера — sessionId недоступен. Rate-limit здесь —
+  // defence-in-depth поверх подписи; IP доверяем только при TRUST_PROXY_HEADERS=true.
+  const limit = checkRateLimit(getRateLimitKey(`webhook:${providerName}`, { request }), 120);
   if (!limit.allowed) {
     return NextResponse.json({ error: "Too many webhook attempts" }, { status: 429 });
   }

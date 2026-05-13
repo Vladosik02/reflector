@@ -23,6 +23,9 @@ export function middleware(req: NextRequest): NextResponse {
 }
 
 export const config = {
+  // Node runtime — lib/session.ts использует node:crypto (HMAC через Buffer).
+  // Edge runtime не предоставляет Buffer/node:crypto без дополнительной обёртки.
+  runtime: "nodejs",
   matcher: [
     // Все маршруты, кроме статики Next, картинок и публичных файлов.
     "/((?!_next/static|_next/image|favicon.svg|manifest.webmanifest|mock|api/webhooks).*)",

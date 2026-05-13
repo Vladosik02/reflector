@@ -103,8 +103,10 @@ function UnlockBanner({
         onClick={onClick}
         disabled={isUnlocking}
         className={cn(
-          "inline-flex items-center gap-2 rounded-btn bg-brand-ink px-5 py-3 text-sm font-medium text-white shadow-cta transition-colors",
-          isUnlocking ? "cursor-not-allowed opacity-70" : "hover:bg-brand-accent",
+          "inline-flex items-center gap-2 rounded-btn bg-ink-cta px-5 py-3 text-sm font-medium text-white shadow-cta transition-all",
+          isUnlocking
+            ? "cursor-not-allowed opacity-70"
+            : "hover:-translate-y-0.5 hover:shadow-cta-hover",
         )}
       >
         <Unlock className="h-4 w-4" aria-hidden="true" />
@@ -231,11 +233,16 @@ function LimitedBadge({ expiresAt }: { expiresAt: string }) {
     <div
       className={cn(
         "absolute right-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide",
-        expired ? "bg-brand-line text-brand-subtle" : "bg-brand-warning/15 text-brand-warning",
+        // text-brand-warning на bg-brand-warning/15 даёт ~3.5:1, ниже WCAG AA (4.5:1).
+        // Используем text-brand-ink — высокий контраст на светлом янтаре.
+        expired ? "bg-brand-line text-brand-subtle" : "bg-brand-warning/15 text-brand-ink",
       )}
       title={expired ? "Срок доступа истёк" : "Лимитированный источник"}
     >
-      <Clock className="h-3 w-3" aria-hidden="true" />
+      <Clock
+        className={cn("h-3 w-3", !expired && "text-brand-warning")}
+        aria-hidden="true"
+      />
       {expired ? "Срок истёк" : remaining.formatted}
     </div>
   );

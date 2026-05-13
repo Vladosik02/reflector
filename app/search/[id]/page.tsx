@@ -1,12 +1,13 @@
 "use client";
 
-import { use, useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Results } from "@/components/Results";
 import type { PublicMatch } from "@/lib/face-match";
+import { useUnlock } from "@/lib/hooks/useUnlock";
 
 interface SearchPageProps {
   params: Promise<{ id: string }>;
@@ -26,7 +27,7 @@ export default function SearchPage({ params }: SearchPageProps) {
 
   const [data, setData] = useState<MatchResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isUnlocking, setIsUnlocking] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   const fetchSearch = useCallback(async () => {
     try {
@@ -50,37 +51,18 @@ export default function SearchPage({ params }: SearchPageProps) {
     void fetchSearch();
   }, [fetchSearch]);
 
-  const handleUnlock = async () => {
-    if (!data) return;
-    setIsUnlocking(true);
-    try {
-      const res = await fetch("/api/unlock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ searchId: data.searchId }),
-      });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
-        setError(body.error ?? "Не удалось начать оплату.");
-        setIsUnlocking(false);
-        return;
-      }
-      const body = (await res.json()) as { checkoutUrl?: string; alreadyUnlocked?: boolean };
-      if (body.alreadyUnlocked) {
-        await fetchSearch();
-        setIsUnlocking(false);
-        return;
-      }
-      if (body.checkoutUrl) {
-        window.location.href = body.checkoutUrl;
-        return;
-      }
-      setIsUnlocking(false);
-    } catch {
-      setError("Сетевая ошибка.");
-      setIsUnlocking(false);
+  // Перевод фокуса на h1 при первой загрузке данных. SR-пользователь и keyboard-юзер
+  // ориентируются по «заголовку страницы», когда переходят /unlock/success → /search/[id].
+  useEffect(() => {
+    if (data && headingRef.current) {
+      headingRef.current.focus();
     }
-  };
+  }, [data]);
+
+  const { handleUnlock, isUnlocking } = useUnlock(data?.searchId ?? null, {
+    onAlreadyUnlocked: fetchSearch,
+    onError: setError,
+  });
 
   return (
     <>
@@ -96,7 +78,11 @@ export default function SearchPage({ params }: SearchPageProps) {
 
         <div className="mt-6 max-w-2xl">
           <span className="text-sm font-medium text-brand-accent">Результаты поиска</span>
-          <h1 className="mt-3 text-headline text-brand-ink">
+          <h1
+            ref={headingRef}
+            tabIndex={-1}
+            className="mt-3 text-headline text-brand-ink outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-4"
+          >
             {data?.unlocked ? "Премиум-совпадения разблокированы" : "Совпадения по вашему фото"}
           </h1>
           <p className="mt-4 text-base text-brand-muted">

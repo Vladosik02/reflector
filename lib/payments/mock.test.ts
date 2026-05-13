@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { MockPaymentProvider } from "./mock";
 
 describe("MockPaymentProvider", () => {
@@ -47,5 +47,40 @@ describe("MockPaymentProvider", () => {
 
   it("verifyAndParseWebhook rejects invalid JSON", async () => {
     await expect(provider.verifyAndParseWebhook("not json", null)).rejects.toThrow(/JSON/);
+  });
+
+  it("createCheckout encodes successUrl/cancelUrl so they survive routing", async () => {
+    const res = await provider.createCheckout({
+      searchId: "search-with-special&chars",
+      amountMinor: 29900,
+      currency: "rub",
+      productName: "Test",
+      successUrl: "http://localhost:3000/unlock/success?searchId=search-with-special&chars",
+      cancelUrl: "http://localhost:3000/unlock/cancel?searchId=search-with-special&chars",
+    });
+    // & в successUrl должен быть закодирован, иначе query-парсер на mock-checkout
+    // примет хвост как отдельный параметр.
+    expect(res.url).toContain("success=http%3A%2F%2Flocalhost%3A3000%2Funlock%2Fsuccess");
+    expect(res.url).toContain("searchId=search-with-special%26chars");
+  });
+
+  describe("production guard", () => {
+    const originalEnv = process.env.NODE_ENV;
+    afterEach(() => {
+      // process.env.NODE_ENV — readonly в типах Node, но runtime принимает запись.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (process.env as any).NODE_ENV = originalEnv;
+    });
+
+    it("verifyAndParseWebhook throws in production", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (process.env as any).NODE_ENV = "production";
+      await expect(
+        provider.verifyAndParseWebhook(
+          JSON.stringify({ eventId: "x", searchId: "y" }),
+          null,
+        ),
+      ).rejects.toThrow(/mock webhook is disabled in production/);
+    });
   });
 });

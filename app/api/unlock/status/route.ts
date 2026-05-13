@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getRateLimitKey } from "@/lib/request";
 import { readSessionId } from "@/lib/session";
 import { getSearchForSession, isSearchUnlocked } from "@/lib/unlock-service";
 
@@ -13,7 +14,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 
   // /unlock/success опрашивает это каждые 800 мс ~ до 25 раз. Лимит 60/мин даёт запас.
-  const limit = checkRateLimit(`unlock-status:${sessionId}`, 60);
+  const limit = checkRateLimit(getRateLimitKey("unlock-status", { sessionId, request }), 60);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: "Слишком много запросов." },

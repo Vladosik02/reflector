@@ -8,8 +8,12 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-brand-line bg-brand-bg">
-      <div className="mx-auto max-w-site px-6 py-16">
+    <footer className="relative border-t border-brand-line bg-brand-bg">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-soft-divider"
+      />
+      <div className="relative mx-auto max-w-site px-6 py-16">
         <div className="grid gap-10 md:grid-cols-4">
           <div>
             <p className="text-sm font-semibold text-brand-ink">{brandName}</p>

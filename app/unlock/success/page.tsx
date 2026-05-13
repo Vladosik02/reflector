@@ -25,39 +25,45 @@ export default function UnlockSuccessPage() {
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
     let attempts = 0;
     const maxAttempts = 25; // ~20 сек при интервале 800 мс
 
     const poll = async () => {
-      while (!cancelled && attempts < maxAttempts) {
+      while (!controller.signal.aborted && attempts < maxAttempts) {
         attempts += 1;
         try {
           const res = await fetch(`/api/unlock/status?searchId=${encodeURIComponent(searchId)}`, {
             cache: "no-store",
+            signal: controller.signal,
           });
           if (res.ok) {
             const data = (await res.json()) as { unlocked: boolean };
             if (data.unlocked) {
-              if (!cancelled) {
+              if (!controller.signal.aborted) {
                 setStatus("ready");
                 router.replace(`/search/${searchId}`);
               }
               return;
             }
           }
-        } catch {
+        } catch (err) {
+          if (err instanceof DOMException && err.name === "AbortError") return;
           // network blip — продолжаем поллинг
         }
-        await new Promise((r) => setTimeout(r, 800));
+        await new Promise<void>((resolve) => {
+          const t = setTimeout(resolve, 800);
+          controller.signal.addEventListener("abort", () => {
+            clearTimeout(t);
+            resolve();
+          });
+        });
       }
-      if (!cancelled) setStatus("timeout");
+      if (!controller.signal.aborted) setStatus("timeout");
     };
 
     void poll();
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [searchId, router]);
 
   return (

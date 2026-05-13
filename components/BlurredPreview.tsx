@@ -44,8 +44,7 @@ export function BlurredPreview({ blurhash }: BlurredPreviewProps) {
         height={32}
         role="img"
         aria-label={alt}
-        className="h-full w-full"
-        style={{ filter: "blur(2px)", imageRendering: "auto" }}
+        className="h-full w-full blur-sm"
       />
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-brand-ink/10">
         <Lock className="h-6 w-6 text-white drop-shadow" aria-hidden="true" />
