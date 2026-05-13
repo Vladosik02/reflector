@@ -1,0 +1,71 @@
+name: GitHub Pages (static preview)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Только один деплой одновременно. Новые пуши отменяют предыдущий.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build static export
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build static export
+        run: npm run build:static
+        env:
+          STATIC_EXPORT: "true"
+          # basePath = "/<repo>"  для project-pages, либо "" если custom-домен / user-page.
+          # `configure-pages` выставляет `base_path` в `steps.pages.outputs.base_path` (например "/reflector").
+          NEXT_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.origin }}${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_STATIC_EXPORT: "true"
+          # ENV-валидация в lib/env.ts требует DATABASE_URL — даём заглушку для сборки.
+          DATABASE_URL: "postgresql://placeholder:placeholder@localhost:5432/placeholder"
+          SESSION_COOKIE_SECRET: "ci-static-export-secret-not-used-in-static-build-but-required-by-zod"
+
+      - name: Add .nojekyll
+        # Без этого GitHub Pages игнорирует папки начинающиеся с _ (важно для _next/).
+        run: touch out/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

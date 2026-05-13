@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { brandName, footerLinks } from "@/lib/content";
 
 /**
@@ -13,9 +14,8 @@ export default function Footer() {
           <div>
             <p className="text-sm font-semibold text-brand-ink">{brandName}</p>
             <p className="mt-3 max-w-xs text-sm text-brand-muted">
-              Сервис поиска двойников на основе нейросетевого анализа лица.
-              Фото удаляются автоматически через 24 часа и не используются для
-              обучения моделей.
+              Сервис поиска двойников на основе нейросетевого анализа лица. Фото удаляются
+              автоматически через 24 часа и не используются для обучения моделей.
             </p>
           </div>
 
@@ -25,7 +25,9 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-brand-line pt-6 text-xs text-brand-subtle md:flex-row md:items-center">
-          <span>© {year} {brandName}. Все права защищены.</span>
+          <span>
+            © {year} {brandName}. Все права защищены.
+          </span>
           <span>Сделано с заботой о приватности.</span>
         </div>
       </div>
@@ -42,20 +44,25 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wider text-brand-subtle">
-        {title}
-      </p>
+      <p className="text-xs font-semibold uppercase tracking-wider text-brand-subtle">{title}</p>
       <ul className="mt-4 space-y-2">
-        {links.map((l) => (
-          <li key={l.href}>
-            <a
-              href={l.href}
-              className="text-sm text-brand-muted transition-colors hover:text-brand-ink"
-            >
-              {l.label}
-            </a>
-          </li>
-        ))}
+        {links.map((l) => {
+          const isInternal = l.href.startsWith("/");
+          const className = "text-sm text-brand-muted transition-colors hover:text-brand-ink";
+          return (
+            <li key={l.href}>
+              {isInternal ? (
+                <Link href={l.href} className={className}>
+                  {l.label}
+                </Link>
+              ) : (
+                <a href={l.href} className={className}>
+                  {l.label}
+                </a>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
