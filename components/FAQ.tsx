@@ -41,13 +41,19 @@ export default function FAQ() {
                   className="flex w-full items-center justify-between gap-6 py-5 text-left transition-colors hover:text-brand-accent"
                 >
                   <span className="text-base font-medium text-brand-ink">{item.question}</span>
-                  <ChevronDown
+                  <span
                     className={cn(
-                      "h-5 w-5 shrink-0 text-brand-subtle transition-transform",
-                      isOpen && "rotate-180 text-brand-accent",
+                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all",
+                      isOpen
+                        ? "border-brand-accent/30 bg-brand-accent-soft text-brand-accent shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_2px_6px_-2px_rgba(91,91,214,0.35)]"
+                        : "border-brand-line bg-brand-surface text-brand-subtle shadow-[0_1px_0_rgba(255,255,255,0.9)_inset]",
                     )}
                     aria-hidden="true"
-                  />
+                  >
+                    <ChevronDown
+                      className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")}
+                    />
+                  </span>
                 </button>
                 <div
                   id={`faq-${idx}`}

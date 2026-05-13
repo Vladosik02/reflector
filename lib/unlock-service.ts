@@ -140,12 +140,18 @@ export async function handleWebhookEvent(
   }
 
   // Authoritative check: webhook event must correspond to a PENDING Payment row we created
-  // in `/api/unlock`. This prevents an attacker (a) from forging an event for a searchId they
-  // don't own, and (b) from claiming a webhook with no corresponding initiated checkout.
+  // in `/api/unlock`. Prevents (a) forged events for someone else's search and (b) claims with
+  // no initiated checkout.
+  //
+  // If providerSessionId is absent on the event (some providers omit it), narrow by PENDING
+  // status. Passing `undefined` directly to Prisma drops the filter entirely — Prisma would
+  // then return ANY Payment for this search, including stale or unrelated ones.
   const payment = await db.payment.findFirst({
     where: {
       searchId: search.id,
-      providerSessionId: event.providerSessionId ?? undefined,
+      ...(event.providerSessionId
+        ? { providerSessionId: event.providerSessionId }
+        : { status: "PENDING" }),
     },
     select: { id: true, status: true },
   });

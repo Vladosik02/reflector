@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { env } from "@/lib/env";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getRateLimitKey } from "@/lib/request";
 import { readSessionId } from "@/lib/session";
 import { getSearchForSession, isSearchUnlocked, startUnlockCheckout } from "@/lib/unlock-service";
 
@@ -19,7 +20,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   // Узкий лимит на инициацию оплаты: каждый legitimate платёж — это один POST.
-  const limit = checkRateLimit(`unlock:${sessionId}`, 5);
+  const limit = checkRateLimit(getRateLimitKey("unlock", { sessionId, request }), 5);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: "Слишком много попыток. Подождите минуту." },

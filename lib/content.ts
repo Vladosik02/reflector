@@ -4,7 +4,7 @@
  */
 import type { MatchSource } from "@/lib/face-match";
 
-export const brandName = "Doppelganger";
+export const brandName = "Reflector";
 
 export const nav = [
   { label: "Как это работает", href: "#how" },

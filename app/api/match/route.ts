@@ -5,6 +5,7 @@ import { env } from "@/lib/env";
 import { getFaceMatchProvider, toPublicMatches } from "@/lib/face-match";
 import type { MatchSource } from "@/lib/face-match";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getRateLimitKey } from "@/lib/request";
 import { readSessionId } from "@/lib/session";
 import { createSearch, ensureAnonymousSession } from "@/lib/unlock-service";
 
@@ -23,8 +24,9 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Сессия не инициализирована." }, { status: 401 });
   }
 
-  const ip = getClientIp(request);
-  const limit = checkRateLimit(`match:${ip}`, env.RATE_LIMIT_PER_MINUTE);
+  // Ключ от подписанной session (HMAC) не подделать, в отличие от X-Forwarded-For.
+  const limitKey = getRateLimitKey("match", { sessionId, request });
+  const limit = checkRateLimit(limitKey, env.RATE_LIMIT_PER_MINUTE);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: "Слишком много запросов. Попробуйте через минуту." },
@@ -129,8 +131,3 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 }
 
-function getClientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]!.trim();
-  return request.headers.get("x-real-ip") ?? "unknown";
-}

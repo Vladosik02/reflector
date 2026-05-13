@@ -45,8 +45,10 @@ export async function getBlurhashForPublicAsset(publicPath: string): Promise<str
  * Проверяет, что `publicPath` указывает на файл строго внутри `public/`.
  * Защищает от `..`-traversal'а и абсолютных путей.
  * Возвращает абсолютный путь, если всё ок.
+ *
+ * Экспортируется для тестов; внутренний потребитель один — `getBlurhashForPublicAsset`.
  */
-function safeResolveUnderPublic(publicPath: string): string {
+export function safeResolveUnderPublic(publicPath: string): string {
   if (typeof publicPath !== "string" || !publicPath.startsWith("/")) {
     throw new Error(`Invalid public path: ${publicPath}`);
   }

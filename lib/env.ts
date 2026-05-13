@@ -21,6 +21,16 @@ const serverSchema = z.object({
     .string()
     .url()
     .default("postgresql://reflector:reflector_dev@localhost:5432/reflector?schema=public"),
+
+  /**
+   * Доверять X-Forwarded-For / X-Real-IP для определения клиентского IP.
+   * Включать ТОЛЬКО за известным reverse-proxy (Vercel, Cloudflare, nginx).
+   * В local dev — false, иначе клиент сам подделывает заголовок и обходит rate-limit.
+   */
+  TRUST_PROXY_HEADERS: z
+    .string()
+    .optional()
+    .transform((v) => v === "true" || v === "1"),
 });
 
 const publicSchema = z.object({
@@ -38,6 +48,7 @@ const parsedServer = serverSchema.safeParse({
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   SESSION_COOKIE_SECRET: process.env.SESSION_COOKIE_SECRET,
   DATABASE_URL: process.env.DATABASE_URL,
+  TRUST_PROXY_HEADERS: process.env.TRUST_PROXY_HEADERS,
 });
 
 const parsedPublic = publicSchema.safeParse({

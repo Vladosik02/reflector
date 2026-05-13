@@ -5,6 +5,7 @@ import { ExternalLink, Info, Loader2, Upload, X } from "lucide-react";
 import { upload } from "@/lib/content";
 import { cn } from "@/lib/cn";
 import type { MatchSource, PublicMatch } from "@/lib/face-match";
+import { useUnlock } from "@/lib/hooks/useUnlock";
 import { Results } from "./Results";
 
 const IS_STATIC_PREVIEW = process.env.NEXT_PUBLIC_STATIC_EXPORT === "true";
@@ -32,9 +33,22 @@ export default function UploadSection() {
   const [isDragging, setIsDragging] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [response, setResponse] = useState<MatchResponse | null>(null);
-  const [isUnlocking, setIsUnlocking] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  const refresh = useCallback(async () => {
+    if (!response) return;
+    const res = await fetch(`/api/search/${response.searchId}`, { cache: "no-store" });
+    if (res.ok) {
+      const fresh = (await res.json()) as MatchResponse;
+      setResponse(fresh);
+    }
+  }, [response]);
+
+  const { handleUnlock, isUnlocking } = useUnlock(response?.searchId ?? null, {
+    onAlreadyUnlocked: refresh,
+    onError: setError,
+  });
 
   useEffect(() => {
     return () => {
@@ -124,52 +138,15 @@ export default function UploadSection() {
     }
   };
 
-  const handleUnlock = async () => {
-    if (!response) return;
-    setIsUnlocking(true);
-    try {
-      const res = await fetch("/api/unlock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ searchId: response.searchId }),
-      });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
-        setError(body.error ?? "Не удалось начать оплату.");
-        setIsUnlocking(false);
-        return;
-      }
-      const data = (await res.json()) as { checkoutUrl?: string; alreadyUnlocked?: boolean };
-      if (data.alreadyUnlocked) {
-        await refresh();
-        setIsUnlocking(false);
-        return;
-      }
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-        return;
-      }
-      setIsUnlocking(false);
-    } catch {
-      setError("Не удалось связаться с платёжным сервисом.");
-      setIsUnlocking(false);
-    }
-  };
-
-  const refresh = useCallback(async () => {
-    if (!response) return;
-    const res = await fetch(`/api/search/${response.searchId}`, { cache: "no-store" });
-    if (res.ok) {
-      const fresh = (await res.json()) as MatchResponse;
-      setResponse(fresh);
-    }
-  }, [response]);
-
   const isSubmitting = status === "submitting";
 
   return (
-    <section id="upload" className="border-t border-brand-line bg-brand-surface">
-      <div className="mx-auto max-w-site px-6 py-16 md:py-24">
+    <section id="upload" className="relative border-t border-brand-line bg-brand-surface">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute right-0 top-0 hidden h-96 w-96 rounded-full bg-orb-violet opacity-40 blur-3xl md:block"
+      />
+      <div className="relative mx-auto max-w-site px-6 py-16 md:py-24">
         <div className="max-w-2xl">
           <span className="text-sm font-medium text-brand-accent">Найти двойника</span>
           <h2 className="mt-3 text-headline text-brand-ink">{upload.title}</h2>
@@ -179,7 +156,7 @@ export default function UploadSection() {
         {IS_STATIC_PREVIEW && <StaticPreviewBanner />}
 
         <div className="mt-10 grid gap-6 md:mt-12 lg:grid-cols-[280px_1fr]">
-          <aside className="rounded-card border border-brand-line bg-brand-bg p-6">
+          <aside className="glass-top relative rounded-card border border-brand-line bg-brand-bg p-6 shadow-card">
             <h3 className="text-sm font-semibold text-brand-ink">Источники поиска</h3>
             <p className="mt-2 text-xs text-brand-subtle">
               Публичная база — бесплатно. Премиум-источники (модели, спорт, архивы) — за фикс. цену,
@@ -203,7 +180,7 @@ export default function UploadSection() {
                     <span className="flex items-center gap-2">
                       {f.label}
                       {isPremium && (
-                        <span className="rounded-full bg-brand-warning/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-brand-warning">
+                        <span className="rounded-full bg-brand-warning/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-brand-ink">
                           Премиум
                         </span>
                       )}
@@ -227,45 +204,42 @@ export default function UploadSection() {
           </aside>
 
           <div className="flex flex-col gap-4">
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setIsDragging(false);
-                const f = e.dataTransfer.files?.[0] ?? null;
-                handleFile(f);
-              }}
-              onClick={() => inputRef.current?.click()}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  inputRef.current?.click();
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              aria-label={upload.dropzoneLabel}
-              className={cn(
-                "flex min-h-[320px] cursor-pointer flex-col items-center justify-center rounded-card border-2 border-dashed bg-brand-bg p-8 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent md:min-h-[360px] md:p-10",
-                isDragging
-                  ? "border-brand-accent bg-brand-accent/5"
-                  : "border-brand-line hover:border-brand-ink/40",
-              )}
-            >
-              <input
-                ref={inputRef}
-                type="file"
-                accept={ACCEPT.join(",")}
-                onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
-                hidden
-              />
+            <input
+              ref={inputRef}
+              type="file"
+              accept={ACCEPT.join(",")}
+              onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
+              hidden
+            />
 
-              {previewUrl ? (
-                <div className="flex flex-col items-center gap-4">
+            {previewUrl ? (
+              // Когда файл выбран, дропзона перестаёт быть кнопкой (внутри было бы вложенное
+              // interactive — нарушение WCAG 2.1.1). Превью + кнопка "Выбрать другое" живут
+              // в обычном div, drag-and-drop ещё работает поверх него.
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  const f = e.dataTransfer.files?.[0] ?? null;
+                  handleFile(f);
+                }}
+                aria-describedby={error ? "upload-error" : "upload-hint"}
+                className={cn(
+                  "relative flex min-h-[320px] flex-col items-center justify-center overflow-hidden rounded-card border-2 border-dashed bg-brand-bg p-8 text-center shadow-inset-line transition-all duration-300 md:min-h-[360px] md:p-10",
+                  isDragging
+                    ? "border-brand-accent bg-brand-accent-soft shadow-glow"
+                    : error
+                      ? "border-red-300"
+                      : "border-brand-line",
+                )}
+              >
+                <div className="dot-grid pointer-events-none absolute inset-0 opacity-30" aria-hidden="true" />
+                <div className="relative flex flex-col items-center gap-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={previewUrl}
@@ -275,30 +249,60 @@ export default function UploadSection() {
                   <p className="text-sm text-brand-muted">{file?.name}</p>
                   <button
                     type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleFile(null);
-                    }}
-                    className="inline-flex items-center gap-1 text-xs text-brand-subtle underline-offset-2 hover:text-brand-ink hover:underline"
+                    onClick={() => handleFile(null)}
+                    className="inline-flex items-center gap-1 rounded-btn px-2 py-1 text-xs text-brand-subtle underline-offset-2 hover:text-brand-ink hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
                   >
                     <X className="h-3 w-3" aria-hidden="true" />
                     Выбрать другое фото
                   </button>
                 </div>
-              ) : (
-                <>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => inputRef.current?.click()}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  const f = e.dataTransfer.files?.[0] ?? null;
+                  handleFile(f);
+                }}
+                aria-label={upload.dropzoneLabel}
+                aria-describedby={error ? "upload-error" : "upload-hint"}
+                className={cn(
+                  "relative flex min-h-[320px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-card border-2 border-dashed bg-brand-bg p-8 text-center shadow-inset-line transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent md:min-h-[360px] md:p-10",
+                  isDragging
+                    ? "border-brand-accent bg-brand-accent-soft shadow-glow"
+                    : error
+                      ? "border-red-300"
+                      : "border-brand-line hover:border-brand-ink/40 hover:bg-white hover:shadow-card",
+                )}
+              >
+                <div className="dot-grid pointer-events-none absolute inset-0 opacity-30" aria-hidden="true" />
+                <div className="relative flex flex-col items-center">
                   <Upload className="h-10 w-10 text-brand-subtle" aria-hidden="true" />
                   <p className="mt-4 text-lg font-medium text-brand-ink">{upload.dropzoneLabel}</p>
-                  <p className="mt-2 text-sm text-brand-subtle">{upload.dropzoneHint}</p>
-                </>
-              )}
+                  <p id="upload-hint" className="mt-2 text-sm text-brand-subtle">
+                    {upload.dropzoneHint}
+                  </p>
+                </div>
+              </button>
+            )}
 
-              {error && (
-                <p className="mt-4 text-sm text-red-600" role="alert">
-                  {error}
-                </p>
-              )}
-            </div>
+            {error && (
+              <p
+                id="upload-error"
+                className="text-sm text-red-600"
+                role="alert"
+              >
+                {error}
+              </p>
+            )}
 
             {previewUrl && (
               <button
@@ -306,8 +310,10 @@ export default function UploadSection() {
                 onClick={handleSubmit}
                 disabled={isSubmitting}
                 className={cn(
-                  "inline-flex items-center justify-center gap-2 rounded-btn bg-brand-ink px-6 py-3 text-sm font-medium text-white shadow-cta transition-colors",
-                  isSubmitting ? "cursor-not-allowed opacity-70" : "hover:bg-brand-accent",
+                  "inline-flex items-center justify-center gap-2 rounded-btn bg-ink-cta px-6 py-3 text-sm font-medium text-white shadow-cta transition-all",
+                  isSubmitting
+                    ? "cursor-not-allowed opacity-70"
+                    : "hover:-translate-y-0.5 hover:shadow-cta-hover",
                 )}
               >
                 {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
