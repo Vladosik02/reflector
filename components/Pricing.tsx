@@ -11,12 +11,10 @@ export default function Pricing() {
     <section id="tariffs" className="mx-auto max-w-site px-6 py-24">
       <div className="max-w-2xl">
         <span className="text-sm font-medium text-brand-accent">Тарифы</span>
-        <h2 className="mt-3 text-headline text-brand-ink">
-          Подходящий план для каждого
-        </h2>
+        <h2 className="mt-3 text-headline text-brand-ink">Подходящий план для каждого</h2>
         <p className="mt-4 text-base text-brand-muted">
-          Начните бесплатно. Перейдите на платный план, когда понадобятся
-          уникальные базы или безлимит анализов.
+          Начните бесплатно. Перейдите на платный план, когда понадобятся уникальные базы или
+          безлимит анализов.
         </p>
       </div>
 
@@ -27,10 +25,8 @@ export default function Pricing() {
       </div>
 
       <p className="mt-10 text-sm text-brand-subtle">
-        Подсказка: часть совпадений из уникальных источников в плане Max
-        показывается только&nbsp;
-        <span className="font-medium text-brand-warning">24 часа</span> с момента
-        первого показа.
+        Подсказка: часть совпадений из уникальных источников в плане Max показывается только&nbsp;
+        <span className="font-medium text-brand-warning">24 часа</span> с момента первого показа.
       </p>
     </section>
   );
@@ -57,25 +53,13 @@ function PlanCard({ plan }: { plan: Plan }) {
       )}
 
       <h3 className="text-title">{plan.name}</h3>
-      <p
-        className={[
-          "mt-2 text-sm",
-          isFeatured ? "text-white/70" : "text-brand-muted",
-        ].join(" ")}
-      >
+      <p className={["mt-2 text-sm", isFeatured ? "text-white/70" : "text-brand-muted"].join(" ")}>
         {plan.description}
       </p>
 
       <div className="mt-6 flex items-baseline gap-2">
-        <span className="text-4xl font-semibold tracking-tight">
-          {plan.price}
-        </span>
-        <span
-          className={[
-            "text-sm",
-            isFeatured ? "text-white/60" : "text-brand-subtle",
-          ].join(" ")}
-        >
+        <span className="text-4xl font-semibold tracking-tight">{plan.price}</span>
+        <span className={["text-sm", isFeatured ? "text-white/60" : "text-brand-subtle"].join(" ")}>
           / {plan.period}
         </span>
       </div>
@@ -84,9 +68,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         {plan.features.map((f) => (
           <li key={f} className="flex items-start gap-2">
             <CheckIcon className={isFeatured ? "text-white" : "text-brand-accent"} />
-            <span className={isFeatured ? "text-white/90" : "text-brand-ink"}>
-              {f}
-            </span>
+            <span className={isFeatured ? "text-white/90" : "text-brand-ink"}>{f}</span>
           </li>
         ))}
       </ul>

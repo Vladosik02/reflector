@@ -1,23 +1,36 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 import { brandName, nav } from "@/lib/content";
+import { cn } from "@/lib/cn";
 
 /**
  * Шапка сайта.
- * Прозрачный полу-белый бэкграунд с лёгким blur — типичный приём 2026.
- * Липкая, всегда сверху.
+ * Прозрачный полу-белый бэкграунд с лёгким blur, липкая.
+ * На мобильных — гамбургер-меню с выпадающей панелью.
  */
 export default function Header() {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [open]);
+
   return (
     <header className="sticky top-0 z-40 border-b border-brand-line/70 bg-brand-bg/70 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-site items-center justify-between px-6">
-        <a href="#top" className="flex items-center gap-2">
-          {/* TODO: подменить на финальный логотип */}
+      <div className="mx-auto flex h-16 max-w-site items-center justify-between px-4 md:px-6">
+        <a href="#top" className="flex items-center gap-2" aria-label={`${brandName} — на главную`}>
           <Logo />
-          <span className="text-sm font-semibold tracking-tight text-brand-ink">
-            {brandName}
-          </span>
+          <span className="text-sm font-semibold tracking-tight text-brand-ink">{brandName}</span>
         </a>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Основная навигация">
           {nav.map((item) => (
             <a
               key={item.href}
@@ -29,12 +42,53 @@ export default function Header() {
           ))}
         </nav>
 
-        <a
-          href="#upload"
-          className="rounded-btn bg-brand-ink px-4 py-2 text-sm font-medium text-white shadow-cta transition-colors hover:bg-brand-accent"
+        <div className="flex items-center gap-2">
+          <a
+            href="#upload"
+            className="hidden rounded-btn bg-brand-ink px-4 py-2 text-sm font-medium text-white shadow-cta transition-colors hover:bg-brand-accent md:inline-flex"
+          >
+            Начать
+          </a>
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-btn text-brand-ink hover:bg-brand-line/40 md:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            aria-label={open ? "Закрыть меню" : "Открыть меню"}
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+      </div>
+
+      <div
+        id="mobile-nav"
+        hidden={!open}
+        className={cn("border-t border-brand-line bg-brand-bg md:hidden")}
+      >
+        <nav
+          className="mx-auto flex max-w-site flex-col gap-1 px-4 py-3"
+          aria-label="Мобильная навигация"
         >
-          Начать
-        </a>
+          {nav.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={() => setOpen(false)}
+              className="rounded-btn px-3 py-3 text-base font-medium text-brand-ink hover:bg-brand-line/40"
+            >
+              {item.label}
+            </a>
+          ))}
+          <a
+            href="#upload"
+            onClick={() => setOpen(false)}
+            className="mt-2 rounded-btn bg-brand-ink px-4 py-3 text-center text-sm font-medium text-white"
+          >
+            Начать
+          </a>
+        </nav>
       </div>
     </header>
   );

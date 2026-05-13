@@ -7,25 +7,21 @@ import type { Config } from "tailwindcss";
  * См. RESEARCH.md для обоснования.
  */
 const config: Config = {
-  content: [
-    "./app/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./lib/**/*.{ts,tsx}",
-  ],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
         brand: {
-          bg: "#FAFAF7",          // тёплый off-white фон страницы
-          surface: "#FFFFFF",      // фон карточек и поверхностей
-          ink: "#0A0A0A",          // основной тёмный текст
-          muted: "#4D4D48",        // вторичный текст
-          subtle: "#8A8A82",       // подсказки, метки
-          line: "#E7E6E1",         // тонкие границы
-          accent: "#5B5BD6",       // основной акцент (приглушённый violet)
+          bg: "#FAFAF7", // тёплый off-white фон страницы
+          surface: "#FFFFFF", // фон карточек и поверхностей
+          ink: "#0A0A0A", // основной тёмный текст
+          muted: "#4D4D48", // вторичный текст
+          subtle: "#8A8A82", // подсказки, метки
+          line: "#E7E6E1", // тонкие границы
+          accent: "#5B5BD6", // основной акцент (приглушённый violet)
           "accent-hover": "#4848C7",
-          success: "#1B7A4F",      // featured / popular tag
-          warning: "#B5651D",      // янтарь — лимитированные источники
+          success: "#1B7A4F", // featured / popular tag
+          warning: "#B5651D", // янтарь — лимитированные источники
         },
       },
       fontFamily: {
@@ -33,9 +29,9 @@ const config: Config = {
       },
       fontSize: {
         // Премиальные тайтлы
-        "display": ["4.5rem", { lineHeight: "1.05", letterSpacing: "-0.025em", fontWeight: "600" }],
-        "headline": ["3rem", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "600" }],
-        "title": ["1.5rem", { lineHeight: "1.3", letterSpacing: "-0.01em", fontWeight: "600" }],
+        display: ["4.5rem", { lineHeight: "1.05", letterSpacing: "-0.025em", fontWeight: "600" }],
+        headline: ["3rem", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "600" }],
+        title: ["1.5rem", { lineHeight: "1.3", letterSpacing: "-0.01em", fontWeight: "600" }],
       },
       maxWidth: {
         site: "1200px",

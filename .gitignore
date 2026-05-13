@@ -26,3 +26,9 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# test coverage
+/coverage
+
+# claude code (worktrees, local config)
+/.claude

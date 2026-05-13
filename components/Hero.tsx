@@ -18,19 +18,15 @@ export default function Hero() {
     <section id="top" className="relative overflow-hidden">
       <div className="dot-grid absolute inset-0 opacity-60" aria-hidden="true" />
 
-      <div className="relative mx-auto max-w-site px-6 pt-24 pb-20 md:pt-32 md:pb-28">
+      <div className="relative mx-auto max-w-site px-6 pb-20 pt-24 md:pb-28 md:pt-32">
         <span className="inline-flex items-center gap-2 rounded-full border border-brand-line bg-brand-surface px-3 py-1 text-xs font-medium text-brand-muted">
           <span className="h-1.5 w-1.5 rounded-full bg-brand-accent" />
           {hero.badge}
         </span>
 
-        <h1 className="mt-6 max-w-3xl text-display text-brand-ink">
-          {hero.title}
-        </h1>
+        <h1 className="mt-6 max-w-3xl text-display text-brand-ink">{hero.title}</h1>
 
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-brand-muted">
-          {hero.subtitle}
-        </p>
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-brand-muted">{hero.subtitle}</p>
 
         <div className="mt-10 flex flex-wrap items-center gap-3">
           <a

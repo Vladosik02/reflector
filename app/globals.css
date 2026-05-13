@@ -17,8 +17,8 @@ html {
 }
 
 body {
-  background-color: #FAFAF7; /* brand.bg */
-  color: #0A0A0A;             /* brand.ink */
+  background-color: #fafaf7; /* brand.bg */
+  color: #0a0a0a; /* brand.ink */
   font-feature-settings: "ss01", "cv11"; /* немного «премиум»-вариантов Inter */
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -41,7 +41,7 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E7E6E1;
+  background: #e7e6e1;
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {

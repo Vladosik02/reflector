@@ -1,0 +1,17 @@
+{
+  "name": "Reflector",
+  "short_name": "Reflector",
+  "description": "Найдите своего двойника по фото",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAF7",
+  "theme_color": "#FAFAF7",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

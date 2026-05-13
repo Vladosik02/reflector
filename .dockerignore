@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.github
+.claude
+coverage
+README.md
+PLAN.md
+RESEARCH.md
+ROADMAP.md
+*.log
+.env*
+!.env.example

@@ -27,12 +27,12 @@ npm run dev
 
 ## Скрипты
 
-| Скрипт | Что делает |
-|---|---|
-| `npm run dev` | Дев-режим с hot reload |
-| `npm run build` | Production-сборка |
+| Скрипт          | Что делает              |
+| --------------- | ----------------------- |
+| `npm run dev`   | Дев-режим с hot reload  |
+| `npm run build` | Production-сборка       |
 | `npm run start` | Запуск собранной версии |
-| `npm run lint` | ESLint |
+| `npm run lint`  | ESLint                  |
 
 ## Дизайн-система
 
