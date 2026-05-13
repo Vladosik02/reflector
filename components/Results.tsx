@@ -239,10 +239,7 @@ function LimitedBadge({ expiresAt }: { expiresAt: string }) {
       )}
       title={expired ? "Срок доступа истёк" : "Лимитированный источник"}
     >
-      <Clock
-        className={cn("h-3 w-3", !expired && "text-brand-warning")}
-        aria-hidden="true"
-      />
+      <Clock className={cn("h-3 w-3", !expired && "text-brand-warning")} aria-hidden="true" />
       {expired ? "Срок истёк" : remaining.formatted}
     </div>
   );

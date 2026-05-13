@@ -9,7 +9,10 @@ import { howItWorks } from "@/lib/content";
 export default function HowItWorks() {
   return (
     <section id="how" className="relative border-y border-brand-line bg-brand-surface">
-      <div className="subtle-grid pointer-events-none absolute inset-0 opacity-50" aria-hidden="true" />
+      <div
+        className="subtle-grid pointer-events-none absolute inset-0 opacity-50"
+        aria-hidden="true"
+      />
 
       <div className="relative mx-auto max-w-site px-6 py-24">
         <div className="max-w-2xl">
@@ -32,10 +35,7 @@ export default function HowItWorks() {
                   {item.step}
                 </span>
                 {idx < howItWorks.length - 1 && (
-                  <span
-                    aria-hidden="true"
-                    className="hidden h-px w-12 bg-soft-divider md:block"
-                  />
+                  <span aria-hidden="true" className="hidden h-px w-12 bg-soft-divider md:block" />
                 )}
               </div>
               <h3 className="mt-6 text-title text-brand-ink">{item.title}</h3>

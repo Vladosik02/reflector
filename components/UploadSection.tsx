@@ -238,7 +238,10 @@ export default function UploadSection() {
                       : "border-brand-line",
                 )}
               >
-                <div className="dot-grid pointer-events-none absolute inset-0 opacity-30" aria-hidden="true" />
+                <div
+                  className="dot-grid pointer-events-none absolute inset-0 opacity-30"
+                  aria-hidden="true"
+                />
                 <div className="relative flex flex-col items-center gap-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -283,7 +286,10 @@ export default function UploadSection() {
                       : "border-brand-line hover:border-brand-ink/40 hover:bg-white hover:shadow-card",
                 )}
               >
-                <div className="dot-grid pointer-events-none absolute inset-0 opacity-30" aria-hidden="true" />
+                <div
+                  className="dot-grid pointer-events-none absolute inset-0 opacity-30"
+                  aria-hidden="true"
+                />
                 <div className="relative flex flex-col items-center">
                   <Upload className="h-10 w-10 text-brand-subtle" aria-hidden="true" />
                   <p className="mt-4 text-lg font-medium text-brand-ink">{upload.dropzoneLabel}</p>
@@ -295,11 +301,7 @@ export default function UploadSection() {
             )}
 
             {error && (
-              <p
-                id="upload-error"
-                className="text-sm text-red-600"
-                role="alert"
-              >
+              <p id="upload-error" className="text-sm text-red-600" role="alert">
                 {error}
               </p>
             )}
