@@ -78,7 +78,7 @@
 - [x] Tamper-resistant blur preview: BlurHash через `sharp` (32×32 → DCT 4×3). Sharp-картинка попадает в DOM только после проверки entitlement на `/api/match` или `/api/search/[id]`.
 - [x] UI: `BlurredPreview`, `UnlockBanner`/`MatchCard` в `Results.tsx`, статус-поллинг.
 - [x] Тесты: 22 unit-теста (session, payments, mock-провайдер, rate-limit, FAQ). Webhook idempotency / unlock-service интеграционные тесты — в Phase 2.6 (требуют test-БД).
-**Завершено** (review-проход применён).
+      **Завершено** (review-проход применён).
 
 ### Фаза 2.6 · Pay-per-unlock — follow-ups после review
 
@@ -128,8 +128,6 @@
 - [ ] MEDIUM: Rotate session id на первом успешном unlock.
 - [ ] MEDIUM: Stripe raw-body integration test (когда появится мерчант).
 - [ ] MEDIUM: Claim-token в `successUrl` для рекавери unlock'а после очистки cookie.
-
-
 
 **Стоит зафиксировать в ENV:**
 

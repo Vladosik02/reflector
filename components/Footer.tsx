@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { brandName, footerLinks } from "@/lib/content";
 
 /**
@@ -45,16 +46,23 @@ function FooterColumn({
     <div>
       <p className="text-xs font-semibold uppercase tracking-wider text-brand-subtle">{title}</p>
       <ul className="mt-4 space-y-2">
-        {links.map((l) => (
-          <li key={l.href}>
-            <a
-              href={l.href}
-              className="text-sm text-brand-muted transition-colors hover:text-brand-ink"
-            >
-              {l.label}
-            </a>
-          </li>
-        ))}
+        {links.map((l) => {
+          const isInternal = l.href.startsWith("/");
+          const className = "text-sm text-brand-muted transition-colors hover:text-brand-ink";
+          return (
+            <li key={l.href}>
+              {isInternal ? (
+                <Link href={l.href} className={className}>
+                  {l.label}
+                </Link>
+              ) : (
+                <a href={l.href} className={className}>
+                  {l.label}
+                </a>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

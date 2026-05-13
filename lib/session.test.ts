@@ -27,7 +27,12 @@ describe("session cookie", () => {
   it("rejects a tampered signature", () => {
     const sid = createSessionId();
     const cookie = buildSessionCookieValue(sid);
-    const tampered = cookie.slice(0, -1) + (cookie.endsWith("a") ? "b" : "a");
+    // Меняем символ В СЕРЕДИНЕ подписи, не в конце: base64url последнего символа
+    // несёт всего 4 значащих бита, и часть свопов даёт ту же расшифрованную сигнатуру.
+    const sigStart = cookie.lastIndexOf(".") + 1;
+    const idx = sigStart + 4;
+    const swap = cookie[idx] === "A" ? "B" : "A";
+    const tampered = cookie.slice(0, idx) + swap + cookie.slice(idx + 1);
     expect(verifySessionCookie(tampered)).toBeNull();
   });
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { faq } from "@/lib/content";
@@ -20,9 +21,9 @@ export default function FAQ() {
           <h2 className="mt-3 text-headline text-brand-ink">Частые вопросы</h2>
           <p className="mt-4 text-base text-brand-muted">
             Если ваш вопрос не покрыт — напишите в&nbsp;
-            <a className="underline underline-offset-2 hover:text-brand-ink" href="/contacts">
+            <Link className="underline underline-offset-2 hover:text-brand-ink" href="/contacts">
               службу поддержки
-            </a>
+            </Link>
             .
           </p>
         </div>

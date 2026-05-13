@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, Upload, X } from "lucide-react";
+import { ExternalLink, Info, Loader2, Upload, X } from "lucide-react";
 import { upload } from "@/lib/content";
 import { cn } from "@/lib/cn";
 import type { MatchSource, PublicMatch } from "@/lib/face-match";
 import { Results } from "./Results";
+
+const IS_STATIC_PREVIEW = process.env.NEXT_PUBLIC_STATIC_EXPORT === "true";
 
 const MAX_BYTES = 15 * 1024 * 1024;
 const ACCEPT = ["image/jpeg", "image/png", "image/webp"];
@@ -174,6 +176,8 @@ export default function UploadSection() {
           <p className="mt-4 text-base text-brand-muted">{upload.description}</p>
         </div>
 
+        {IS_STATIC_PREVIEW && <StaticPreviewBanner />}
+
         <div className="mt-10 grid gap-6 md:mt-12 lg:grid-cols-[280px_1fr]">
           <aside className="rounded-card border border-brand-line bg-brand-bg p-6">
             <h3 className="text-sm font-semibold text-brand-ink">Источники поиска</h3>
@@ -328,6 +332,38 @@ export default function UploadSection() {
         {status === "idle" && !file && <ResultsPlaceholder />}
       </div>
     </section>
+  );
+}
+
+function StaticPreviewBanner() {
+  return (
+    <div
+      role="note"
+      className="mt-8 flex flex-col items-start gap-3 rounded-card border border-brand-accent/40 bg-brand-accent/5 p-5 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div className="flex items-start gap-3">
+        <Info className="mt-0.5 h-5 w-5 shrink-0 text-brand-accent" aria-hidden="true" />
+        <div>
+          <p className="text-sm font-semibold text-brand-ink">
+            Это статический preview на GitHub Pages
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-brand-muted">
+            Поиск, оплата и разблокировка требуют серверной части (API, БД, webhook&apos;и) и здесь
+            не работают. UI ниже — рабочий, но клик «Найти двойников» не вернёт результаты. Для
+            живой версии разверните app на Vercel / Railway / своём VPS — Dockerfile в репозитории.
+          </p>
+        </div>
+      </div>
+      <a
+        href="https://vercel.com/new"
+        target="_blank"
+        rel="noreferrer noopener"
+        className="inline-flex shrink-0 items-center gap-2 rounded-btn border border-brand-line bg-brand-surface px-4 py-2 text-sm font-medium text-brand-ink hover:bg-white"
+      >
+        Deploy на Vercel
+        <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+      </a>
+    </div>
   );
 }
 
