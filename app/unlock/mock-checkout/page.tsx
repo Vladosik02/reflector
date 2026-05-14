@@ -82,7 +82,7 @@ export default function MockCheckoutPage() {
 
           {error && (
             <p
-              className="mt-6 rounded-btn border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+              className="mt-6 rounded-btn border border-brand-danger/40 bg-brand-danger/10 p-3 text-sm text-brand-danger"
               role="alert"
             >
               {error}
@@ -95,8 +95,10 @@ export default function MockCheckoutPage() {
               onClick={handlePay}
               disabled={!ready || submitting}
               className={cn(
-                "inline-flex items-center justify-center gap-2 rounded-btn bg-brand-ink px-5 py-3 text-sm font-medium text-white shadow-cta transition-colors",
-                !ready || submitting ? "cursor-not-allowed opacity-70" : "hover:bg-brand-accent",
+                "inline-flex items-center justify-center gap-2 rounded-btn bg-cta-violet px-5 py-3 text-sm font-medium text-white shadow-cta transition-all",
+                !ready || submitting
+                  ? "cursor-not-allowed opacity-60"
+                  : "hover:-translate-y-0.5 hover:shadow-cta-hover",
               )}
             >
               {submitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}

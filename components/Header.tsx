@@ -7,9 +7,9 @@ import { cn } from "@/lib/cn";
 
 /**
  * Шапка сайта.
- * Прозрачный полу-белый бэкграунд с blur, липкая.
- * При скролле добавляется тонкая тень и плотнее становится фон — даёт
- * «отделение» от контента, не нагружая визуально.
+ * Sticky, тёмный полупрозрачный фон + blur. При скролле плотнее.
+ * Лого — 2 пересекающихся круга в brand.info (голубой) — наш аналог
+ * «голубого сердца» у nakrutochka, но собственный знак.
  */
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -36,14 +36,18 @@ export default function Header() {
       className={cn(
         "sticky top-0 z-40 border-b transition-all duration-300",
         scrolled
-          ? "border-brand-line/80 bg-brand-bg/85 shadow-header backdrop-blur-xl"
-          : "border-brand-line/50 bg-brand-bg/60 backdrop-blur-md",
+          ? "border-brand-line bg-brand-bg/85 shadow-header backdrop-blur-xl"
+          : "border-transparent bg-brand-bg/60 backdrop-blur-md",
       )}
     >
       <div className="mx-auto flex h-16 max-w-site items-center justify-between px-4 md:px-6">
-        <a href="#top" className="flex items-center gap-2" aria-label={`${brandName} — на главную`}>
+        <a
+          href="#top"
+          className="flex items-center gap-2 text-brand-info"
+          aria-label={`${brandName} — на главную`}
+        >
           <Logo />
-          <span className="text-sm font-semibold tracking-tight text-brand-ink">{brandName}</span>
+          <span className="text-sm font-semibold tracking-tight text-white">{brandName}</span>
         </a>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Основная навигация">
@@ -51,7 +55,7 @@ export default function Header() {
             <a
               key={item.href}
               href={item.href}
-              className="text-sm text-brand-muted transition-colors hover:text-brand-ink"
+              className="text-sm text-brand-muted transition-colors hover:text-white"
             >
               {item.label}
             </a>
@@ -61,13 +65,13 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <a
             href="#upload"
-            className="hidden rounded-btn bg-ink-cta px-4 py-2 text-sm font-medium text-white shadow-cta transition-all hover:-translate-y-0.5 hover:shadow-cta-hover md:inline-flex"
+            className="hidden rounded-btn bg-cta-violet px-4 py-2 text-sm font-medium text-white shadow-cta transition-all hover:-translate-y-0.5 hover:shadow-cta-hover md:inline-flex"
           >
             Начать
           </a>
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-btn text-brand-ink hover:bg-brand-line/40 md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-btn text-white hover:bg-brand-elevated md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Закрыть меню" : "Открыть меню"}
@@ -81,7 +85,7 @@ export default function Header() {
       <div
         id="mobile-nav"
         hidden={!open}
-        className={cn("border-t border-brand-line bg-brand-bg md:hidden")}
+        className={cn("border-t border-brand-line bg-brand-surface md:hidden")}
       >
         <nav
           className="mx-auto flex max-w-site flex-col gap-1 px-4 py-3"
@@ -92,7 +96,7 @@ export default function Header() {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="rounded-btn px-3 py-3 text-base font-medium text-brand-ink hover:bg-brand-line/40"
+              className="rounded-btn px-3 py-3 text-base font-medium text-white hover:bg-brand-elevated"
             >
               {item.label}
             </a>
@@ -100,7 +104,7 @@ export default function Header() {
           <a
             href="#upload"
             onClick={() => setOpen(false)}
-            className="mt-2 rounded-btn bg-brand-ink px-4 py-3 text-center text-sm font-medium text-white"
+            className="mt-2 rounded-btn bg-cta-violet px-4 py-3 text-center text-sm font-medium text-white shadow-cta"
           >
             Начать
           </a>

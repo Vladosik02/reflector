@@ -4,12 +4,12 @@
 
 /* ---------------------------------------------------------------
    Глобальные базовые стили.
-   Здесь только то, что не выражается через утилиты Tailwind.
-   Все цвета берутся из tailwind.config.ts (брэнд-токены).
+   Тёмная фиолетово-синяя тема (Reflector v2 — стиль nakrutochka).
+   Все цвета — из tailwind.config.ts (брэнд-токены).
    --------------------------------------------------------------- */
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html {
@@ -17,8 +17,8 @@ html {
 }
 
 body {
-  background-color: #fafaf7; /* brand.bg */
-  color: #0a0a0a; /* brand.ink */
+  background-color: #0b1124; /* brand.bg — deep navy */
+  color: #ffffff; /* brand.ink */
   font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -27,75 +27,76 @@ body {
 /* ===============================================================
    СЛОИ ГЛУБИНЫ
    Каждая утилита решает одну атмосферную задачу. Комбинируются
-   через absolute-слои с opacity. Все цвета — из брэнд-палитры,
-   ничего «голливудски» яркого.
+   через absolute-слои с opacity. На тёмном фоне используются
+   светлые акценты (white alpha + фиолетовый/синий glow).
    =============================================================== */
 
-/* Тонкая dot-grid подложка для hero — вдохновлено Vercel.
-   Маска делает точки плотнее в центре и растворяет к краям —
-   так подложка ощущается «глубокой», а не как обои. */
+/* Hero aurora — 2 радиальных gradient (фиолетовый сверху-слева,
+   синий сверху-справа) над тёмным navy фоном. */
+.aurora {
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 0%, rgba(139, 92, 246, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 10%, rgba(90, 143, 255, 0.16), transparent 60%);
+}
+
+/* Dot-grid подложка для hero — светлые точки на тёмном фоне. */
 .dot-grid {
-  background-image: radial-gradient(rgba(10, 10, 10, 0.09) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 22px 22px;
   background-position: 0 0;
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
   mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
 }
 
-/* Тёплый радиальный spotlight сверху — иллюзия источника света над hero. */
+/* Hero spotlight — оставлено имя для совместимости. */
 .hero-spotlight {
-  background: radial-gradient(
-      ellipse 60% 40% at 50% -10%,
-      rgba(255, 255, 255, 0.9),
-      transparent 70%
-    ),
-    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(231, 230, 225, 0.45), transparent 70%);
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 0%, rgba(139, 92, 246, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 10%, rgba(90, 143, 255, 0.16), transparent 60%);
 }
 
-/* Soft-orb — декоративный размытый цветной круг (для фона hero / featured). */
+/* Soft-orb — декоративный размытый круг (для фона hero / featured). */
 .orb {
   filter: blur(60px);
   will-change: opacity;
 }
 
-/* Vignette — лёгкое затемнение нижнего края секции, добавляет «глубины кадра». */
+/* Vignette — лёгкое затемнение нижнего края секции (очень слабое — фон уже тёмный). */
 .vignette-bottom {
-  background: linear-gradient(to bottom, transparent 60%, rgba(10, 10, 10, 0.025) 100%);
+  background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.2) 100%);
 }
 
-/* Decorative soft-divider — мягкая горизонтальная линия с затухающими краями.
-   Используется поверх обычной border-t, когда нужно «дороже». */
+/* Decorative soft-divider — горизонтальный fade с белыми краями. */
 .soft-divider {
   height: 1px;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(10, 10, 10, 0.1) 20%,
-    rgba(10, 10, 10, 0.1) 80%,
+    rgba(255, 255, 255, 0.12) 20%,
+    rgba(255, 255, 255, 0.12) 80%,
     transparent 100%
   );
 }
 
-/* Тонкая diagonal-grid для упрощённых секций (опционально). */
+/* Тонкая diagonal-grid (светлые линии на тёмном фоне). */
 .subtle-grid {
-  background-image: linear-gradient(rgba(10, 10, 10, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(10, 10, 10, 0.04) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: 64px 64px;
   -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 30%, transparent 80%);
   mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 30%, transparent 80%);
 }
 
-/* «Стеклянная» подсветка по верху карточки. На светлом фоне — почти не видно,
-   но именно она делает поверхность «дорогой» (1px белой линии под краем). */
+/* Стеклянная подсветка по верху карточки — тонкая 1px белая
+   линия по верхнему краю на тёмной поверхности. */
 .glass-top::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, transparent 30%);
-  mix-blend-mode: overlay;
-  opacity: 0.6;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 30%);
+  opacity: 1;
 }
 
 /* Reduced motion — отключаем декоративные пульсации. */
@@ -109,7 +110,7 @@ body {
   }
 }
 
-/* Кастомный скроллбар — нейтральный, не отвлекающий */
+/* Кастомный тёмный скроллбар. */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -118,9 +119,29 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #e7e6e1;
+  background: #1a2238; /* brand.elevated */
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #cfcec8;
+  background: #2a3552;
+}
+
+/* Тёмная prose-тема для статичных страниц (PageShell article). */
+.prose-invert :where(h1, h2, h3, h4, h5, h6) {
+  color: #ffffff;
+}
+.prose-invert :where(p, li, ul, ol, blockquote) {
+  color: #a3b0c7;
+}
+.prose-invert :where(a) {
+  color: #5a8fff;
+}
+.prose-invert :where(strong) {
+  color: #ffffff;
+}
+.prose-invert :where(code) {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.125rem 0.375rem;
+  border-radius: 6px;
 }

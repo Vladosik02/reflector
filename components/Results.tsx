@@ -36,8 +36,8 @@ export function Results({
 }: ResultsProps) {
   if (matches.length === 0) {
     return (
-      <div className="mt-10 rounded-card border border-brand-line bg-brand-bg p-8 text-center">
-        <p className="text-sm font-medium text-brand-ink">Совпадений не найдено</p>
+      <div className="mt-10 rounded-card border border-brand-line bg-brand-elevated p-8 text-center">
+        <p className="text-sm font-medium text-white">Совпадений не найдено</p>
         <p className="mt-2 text-xs text-brand-subtle">
           Попробуйте другое фото или расширьте список источников.
         </p>
@@ -49,10 +49,10 @@ export function Results({
   const showUnlockCta = lockedCount > 0 && !unlocked;
 
   return (
-    <div className="mt-10 rounded-card border border-brand-line bg-brand-bg p-6">
+    <div className="mt-10 rounded-card border border-brand-line bg-brand-elevated p-6">
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-brand-accent" aria-hidden="true" />
-        <p className="text-sm font-semibold text-brand-ink">Найдено совпадений: {matches.length}</p>
+        <p className="text-sm font-semibold text-white">Найдено совпадений: {matches.length}</p>
       </div>
       <p className="mt-1 text-xs text-brand-subtle">
         Отсортировано по проценту сходства.
@@ -87,11 +87,11 @@ function UnlockBanner({
   isUnlocking: boolean;
 }) {
   return (
-    <div className="mt-5 flex flex-col items-start gap-3 rounded-card border border-brand-warning/40 bg-brand-warning/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mt-5 flex flex-col items-start gap-3 rounded-card border border-brand-accent/40 bg-brand-surface p-5 shadow-glow-violet sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-3">
-        <Lock className="mt-0.5 h-5 w-5 shrink-0 text-brand-warning" aria-hidden="true" />
+        <Lock className="mt-0.5 h-5 w-5 shrink-0 text-brand-accent" aria-hidden="true" />
         <div>
-          <p className="text-sm font-semibold text-brand-ink">Премиум-совпадения скрыты</p>
+          <p className="text-sm font-semibold text-white">Премиум-совпадения скрыты</p>
           <p className="mt-1 text-xs leading-relaxed text-brand-muted">
             Разблокируйте все премиум-совпадения этого поиска — модели, спортсмены, архивы — за одну
             фикс. цену. Без подписки, без аккаунта.
@@ -103,9 +103,9 @@ function UnlockBanner({
         onClick={onClick}
         disabled={isUnlocking}
         className={cn(
-          "inline-flex items-center gap-2 rounded-btn bg-ink-cta px-5 py-3 text-sm font-medium text-white shadow-cta transition-all",
+          "inline-flex items-center gap-2 rounded-btn bg-cta-violet px-5 py-3 text-sm font-medium text-white shadow-cta transition-all",
           isUnlocking
-            ? "cursor-not-allowed opacity-70"
+            ? "cursor-not-allowed opacity-60"
             : "hover:-translate-y-0.5 hover:shadow-cta-hover",
         )}
       >
@@ -135,7 +135,9 @@ function MatchCard({ userPhotoUrl, match }: MatchCardProps) {
     <article
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-card border bg-brand-surface transition-colors",
-        isLocked ? "border-brand-warning/40" : "border-brand-line hover:border-brand-ink/30",
+        isLocked
+          ? "border-brand-warning/40 hover:border-brand-warning/60"
+          : "border-brand-line hover:border-brand-accent/40",
       )}
     >
       {match.gated && !isLocked && "expiresAt" in match && match.expiresAt && (
@@ -161,7 +163,7 @@ function MatchCard({ userPhotoUrl, match }: MatchCardProps) {
               />
             )
           )}
-          <span className="absolute bottom-1 left-1 rounded-full bg-brand-ink/70 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-white">
+          <span className="absolute bottom-1 left-1 rounded-pill bg-brand-bg/80 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-white backdrop-blur">
             Совпадение
           </span>
         </div>
@@ -169,7 +171,7 @@ function MatchCard({ userPhotoUrl, match }: MatchCardProps) {
 
       <div className="flex flex-col gap-2 p-4">
         <div className="flex items-baseline justify-between gap-2">
-          <p className="truncate text-sm font-semibold text-brand-ink">{match.name}</p>
+          <p className="truncate text-sm font-semibold text-white">{match.name}</p>
           <span
             className="text-sm font-semibold tabular-nums text-brand-accent"
             aria-label={`Сходство ${percent} процентов`}
@@ -198,7 +200,7 @@ function PhotoFrame({ src, label }: { src: string; label: string }) {
         className="object-cover"
         unoptimized={src.startsWith("blob:") || src.startsWith("data:")}
       />
-      <span className="absolute bottom-1 left-1 rounded-full bg-brand-ink/70 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-white">
+      <span className="absolute bottom-1 left-1 rounded-pill bg-brand-bg/80 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-white backdrop-blur">
         {label}
       </span>
     </div>
@@ -217,7 +219,7 @@ function SimilarityBar({ percent, dimmed }: { percent: number; dimmed?: boolean 
       <div
         className={cn(
           "h-full transition-[width] duration-500",
-          dimmed ? "bg-brand-warning/40" : "bg-brand-accent",
+          dimmed ? "bg-brand-warning/60" : "bg-cta-violet",
         )}
         style={{ width: `${percent}%` }}
       />
@@ -232,10 +234,10 @@ function LimitedBadge({ expiresAt }: { expiresAt: string }) {
   return (
     <div
       className={cn(
-        "absolute right-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide",
-        // text-brand-warning на bg-brand-warning/15 даёт ~3.5:1, ниже WCAG AA (4.5:1).
-        // Используем text-brand-ink — высокий контраст на светлом янтаре.
-        expired ? "bg-brand-line text-brand-subtle" : "bg-brand-warning/15 text-brand-ink",
+        "absolute right-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide",
+        expired
+          ? "border border-brand-line bg-brand-elevated text-brand-subtle"
+          : "border border-brand-warning/30 bg-brand-warning/15 text-brand-warning",
       )}
       title={expired ? "Срок доступа истёк" : "Лимитированный источник"}
     >

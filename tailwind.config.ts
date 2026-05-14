@@ -3,14 +3,14 @@ import type { Config } from "tailwindcss";
 /**
  * Дизайн-токены проекта.
  * Все цвета — единая точка правды. Дизайнер меняет здесь — обновляется везде.
- * Гамма выбрана светлой и тёплой (ориентир — Linear + Anthropic + Stripe).
- * См. RESEARCH.md для обоснования.
+ * Тёмная фиолетово-синяя палитра (ориентир — nakrutochka.com стиль:
+ * deep navy фон + фиолетовые CTA + голубые акценты в заголовках).
  *
  * Тени строятся как многослойные:
- *   — внутренний highlight сверху (имитация стекла / премиум-пластика),
- *   — короткая контактная тень (1px) для отрыва от фона,
- *   — длинная мягкая (24–40px) для атмосферной глубины.
- * Это даёт «глубину», не теряя светлый off-white характер.
+ *   — внутренний highlight сверху (слабый, ~0.04, иначе грубо на тёмном фоне);
+ *   — короткая контактная тень (1px) для отрыва от фона;
+ *   — длинная мягкая (24–40px) для атмосферной глубины;
+ *   — отдельные glow-shadow для фиолетового свечения вокруг CTA.
  */
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
@@ -18,90 +18,107 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          bg: "#FAFAF7", // тёплый off-white фон страницы
-          surface: "#FFFFFF", // фон карточек и поверхностей
-          ink: "#0A0A0A", // основной тёмный текст
-          muted: "#4D4D48", // вторичный текст
-          subtle: "#8A8A82", // подсказки, метки
-          line: "#E7E6E1", // тонкие границы
-          accent: "#5B5BD6", // основной акцент (приглушённый violet)
-          "accent-hover": "#4848C7",
-          "accent-soft": "#EEEEFB", // мягкая подложка под accent (для glow)
-          success: "#1B7A4F", // featured / popular tag
-          warning: "#B5651D", // янтарь — лимитированные источники
+          bg: "#0B1124", // тёмный navy — фон страницы
+          surface: "#131A2E", // карточки (1-я ступень)
+          elevated: "#1A2238", // карточки выделенные / hover-fill
+          ink: "#FFFFFF", // основной текст
+          muted: "#A3B0C7", // вторичный текст
+          subtle: "#6B7894", // подсказки, метки
+          line: "rgba(255,255,255,0.08)", // тонкие границы
+          "line-strong": "rgba(255,255,255,0.14)",
+          accent: "#8B5CF6", // violet — primary CTA
+          "accent-hover": "#7C3AED",
+          "accent-soft": "rgba(139,92,246,0.15)", // soft fill для outline-кнопок
+          "accent-glow": "rgba(139,92,246,0.40)", // для shadow/glow
+          info: "#5A8FFF", // голубой акцент для линков и выделений в заголовках
+          success: "#22C55E", // чекмарки, успех
+          warning: "#F59E0B", // янтарь — лимитированные совпадения (countdown)
+          danger: "#EF4444",
         },
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
       fontSize: {
-        display: ["4.5rem", { lineHeight: "1.05", letterSpacing: "-0.025em", fontWeight: "600" }],
-        headline: ["3rem", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "600" }],
+        display: ["4.5rem", { lineHeight: "1.05", letterSpacing: "-0.03em", fontWeight: "700" }],
+        headline: ["3rem", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
         title: ["1.5rem", { lineHeight: "1.3", letterSpacing: "-0.01em", fontWeight: "600" }],
       },
       maxWidth: {
         site: "1200px",
       },
       borderRadius: {
-        card: "16px",
-        btn: "10px",
+        card: "24px",
+        btn: "12px",
+        pill: "999px",
       },
       boxShadow: {
-        /* Базовая карточка: едва уловимый отрыв от фона + длинная мягкая тень. */
+        /* Базовая карточка на тёмном фоне. */
         card: [
-          "0 1px 0 rgba(255,255,255,0.7) inset",
-          "0 1px 2px rgba(10,10,10,0.04)",
-          "0 12px 32px -12px rgba(10,10,10,0.08)",
+          "0 1px 0 rgba(255,255,255,0.04) inset",
+          "0 1px 2px rgba(0,0,0,0.4)",
+          "0 16px 32px -16px rgba(0,0,0,0.55)",
         ].join(", "),
         /* «Поднятая» карточка для hover/featured. */
         lift: [
-          "0 1px 0 rgba(255,255,255,0.8) inset",
-          "0 1px 2px rgba(10,10,10,0.06)",
-          "0 18px 40px -16px rgba(10,10,10,0.16)",
-          "0 32px 64px -32px rgba(10,10,10,0.12)",
+          "0 1px 0 rgba(255,255,255,0.06) inset",
+          "0 1px 2px rgba(0,0,0,0.4)",
+          "0 16px 32px -16px rgba(0,0,0,0.55)",
+          "0 32px 64px -32px rgba(0,0,0,0.6)",
         ].join(", "),
-        /* CTA-кнопка: highlight сверху + плотная контактная тень. */
+        /* Фиолетовая CTA с подложкой violet glow. */
         cta: [
-          "0 1px 0 rgba(255,255,255,0.18) inset",
-          "0 1px 2px rgba(10,10,10,0.18)",
-          "0 8px 20px -8px rgba(10,10,10,0.35)",
+          "0 1px 0 rgba(255,255,255,0.2) inset",
+          "0 8px 24px -8px rgba(139,92,246,0.55)",
+          "0 1px 2px rgba(0,0,0,0.3)",
         ].join(", "),
         "cta-hover": [
-          "0 1px 0 rgba(255,255,255,0.22) inset",
-          "0 2px 4px rgba(10,10,10,0.22)",
-          "0 14px 28px -10px rgba(91,91,214,0.45)",
+          "0 1px 0 rgba(255,255,255,0.25) inset",
+          "0 14px 32px -10px rgba(139,92,246,0.75)",
         ].join(", "),
         /* Тёмная featured-карточка (Pricing Pro). */
         "ink-lift": [
           "0 1px 0 rgba(255,255,255,0.08) inset",
-          "0 2px 4px rgba(10,10,10,0.18)",
-          "0 24px 56px -20px rgba(10,10,10,0.45)",
+          "0 2px 4px rgba(0,0,0,0.3)",
+          "0 24px 56px -20px rgba(0,0,0,0.5)",
         ].join(", "),
-        /* Inset-окантовка: имитация тонкой внутренней линии для премиум-края. */
-        "inset-line": "0 0 0 1px rgba(10,10,10,0.04) inset",
-        /* Glow вокруг видео/featured (тёплый, не «голливудский»). */
-        glow: "0 40px 80px -40px rgba(91,91,214,0.25), 0 20px 40px -20px rgba(10,10,10,0.08)",
+        /* Inset-окантовка: имитация тонкой внутренней линии. */
+        "inset-line": "0 0 0 1px rgba(255,255,255,0.06) inset",
+        /* Violet glow вокруг focus-visible / featured. */
+        "glow-violet":
+          "0 0 0 1px rgba(139,92,246,0.4), 0 24px 56px -20px rgba(139,92,246,0.55)",
+        glow: "0 0 0 1px rgba(139,92,246,0.4), 0 24px 56px -20px rgba(139,92,246,0.55)",
         /* Sticky-header при скролле. */
-        header: "0 1px 0 rgba(10,10,10,0.04), 0 8px 24px -16px rgba(10,10,10,0.08)",
+        header: "0 1px 0 rgba(255,255,255,0.04), 0 8px 24px -16px rgba(0,0,0,0.6)",
       },
       backgroundImage: {
-        /* Тёплый радиальный spotlight для hero — центр чуть светлее фона. */
+        /* Hero aurora — фиолетовый + синий glow над navy фоном. */
+        "hero-aurora":
+          "radial-gradient(ellipse 60% 50% at 20% 0%, rgba(139,92,246,0.22), rgba(11,17,36,0) 60%), radial-gradient(ellipse 60% 50% at 80% 10%, rgba(90,143,255,0.16), rgba(11,17,36,0) 60%)",
+        /* Hero spotlight — устаревшее имя, оставлено для совместимости. */
         "hero-spotlight":
-          "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.9), rgba(250,250,247,0) 70%)",
-        /* Decorative orb под featured/hero — едва уловимый violet glow. */
+          "radial-gradient(ellipse 60% 50% at 20% 0%, rgba(139,92,246,0.22), rgba(11,17,36,0) 60%), radial-gradient(ellipse 60% 50% at 80% 10%, rgba(90,143,255,0.16), rgba(11,17,36,0) 60%)",
+        /* Decorative orb под featured/hero — фиолетовый glow. */
         "orb-violet":
-          "radial-gradient(circle at center, rgba(91,91,214,0.18), rgba(91,91,214,0) 70%)",
+          "radial-gradient(circle at center, rgba(139,92,246,0.4), rgba(139,92,246,0) 70%)",
+        "orb-info":
+          "radial-gradient(circle at center, rgba(90,143,255,0.3), rgba(90,143,255,0) 70%)",
         "orb-warm":
-          "radial-gradient(circle at center, rgba(181,101,29,0.12), rgba(181,101,29,0) 70%)",
-        /* Mesh-gradient для featured pricing card — едва живой violet оттенок. */
+          "radial-gradient(circle at center, rgba(245,158,11,0.18), rgba(245,158,11,0) 70%)",
+        /* Surface mesh для featured pricing card — фиолетово-синие подсветки. */
+        "surface-mesh":
+          "radial-gradient(ellipse 100% 80% at 0% 0%, rgba(139,92,246,0.35), rgba(11,17,36,0) 60%), radial-gradient(ellipse 80% 60% at 100% 100%, rgba(90,143,255,0.22), rgba(11,17,36,0) 55%)",
         "ink-mesh":
-          "radial-gradient(ellipse 100% 80% at 0% 0%, rgba(91,91,214,0.35), rgba(10,10,10,0) 60%), radial-gradient(ellipse 80% 60% at 100% 100%, rgba(91,91,214,0.18), rgba(10,10,10,0) 55%)",
-        /* CTA-кнопка с тонким верхним highlight'ом и нижним углублением. */
-        "ink-cta": "linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)",
-        "accent-cta": "linear-gradient(180deg, #6868dd 0%, #4848C7 100%)",
-        /* Soft divider — горизонтальный мягкий fade для разделения секций. */
+          "radial-gradient(ellipse 100% 80% at 0% 0%, rgba(139,92,246,0.35), rgba(11,17,36,0) 60%), radial-gradient(ellipse 80% 60% at 100% 100%, rgba(90,143,255,0.22), rgba(11,17,36,0) 55%)",
+        /* Основная фиолетовая CTA-кнопка (gradient violet). */
+        "cta-violet": "linear-gradient(180deg, #A78BFA 0%, #7C3AED 100%)",
+        "cta-violet-hover": "linear-gradient(180deg, #B89CFB 0%, #8B5CF6 100%)",
+        /* Старые имена — оставлены для обратной совместимости в коде. */
+        "ink-cta": "linear-gradient(180deg, #A78BFA 0%, #7C3AED 100%)",
+        "accent-cta": "linear-gradient(180deg, #B89CFB 0%, #8B5CF6 100%)",
+        /* Soft divider — горизонтальный мягкий fade. */
         "soft-divider":
-          "linear-gradient(90deg, transparent 0%, rgba(10,10,10,0.08) 20%, rgba(10,10,10,0.08) 80%, transparent 100%)",
+          "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 20%, rgba(255,255,255,0.12) 80%, transparent 100%)",
       },
       keyframes: {
         "fade-in-up": {

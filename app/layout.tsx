@@ -57,7 +57,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAFAF7",
+  themeColor: "#0B1124",
   width: "device-width",
   initialScale: 1,
 };
@@ -83,7 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="ru" className={inter.variable}>
-      <body className="font-sans antialiased">
+      <body className="bg-brand-bg font-sans text-brand-ink antialiased">
         {children}
         <Script
           id="ld-org"

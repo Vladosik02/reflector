@@ -93,7 +93,7 @@ export default function SearchPage({ params }: SearchPageProps) {
 
         {error && (
           <p
-            className="mt-8 rounded-card border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+            className="mt-8 rounded-card border border-brand-danger/40 bg-brand-danger/10 p-4 text-sm text-brand-danger"
             role="alert"
           >
             {error}
