@@ -8,10 +8,7 @@ import { cn } from "@/lib/cn";
  */
 export default function HowItWorks({ className }: { className?: string }) {
   return (
-    <section
-      id="how"
-      className={cn("relative border-t border-brand-line bg-brand-bg", className)}
-    >
+    <section id="how" className={cn("relative border-t border-brand-line bg-brand-bg", className)}>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-soft-divider"

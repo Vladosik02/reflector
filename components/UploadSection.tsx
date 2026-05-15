@@ -167,9 +167,7 @@ export default function UploadSection({ className }: { className?: string }) {
       />
       <div className="relative mx-auto max-w-site px-6 py-6 lg:py-24">
         {/* Mobile-only лаконичный заголовок. */}
-        <h1 className="text-2xl font-semibold text-brand-ink lg:hidden">
-          {upload.mobileTitle}
-        </h1>
+        <h1 className="text-2xl font-semibold text-brand-ink lg:hidden">{upload.mobileTitle}</h1>
 
         {/* Desktop-only богатый блок: eyebrow + h2 + description. */}
         <div className="hidden max-w-2xl lg:block">
@@ -223,8 +221,8 @@ export default function UploadSection({ className }: { className?: string }) {
             </div>
 
             <p className="mt-6 rounded-btn border border-brand-line bg-brand-surface p-3 text-xs leading-relaxed text-brand-muted">
-              Premium sources are returned <span className="font-medium text-white">blurred</span> at
-              first. One payment reveals every blurred match in this search.
+              Premium sources are returned <span className="font-medium text-white">blurred</span>{" "}
+              at first. One payment reveals every blurred match in this search.
             </p>
           </aside>
 
@@ -391,9 +389,9 @@ function StaticPreviewBanner() {
           </p>
           <p className="mt-1 text-xs leading-relaxed text-brand-muted">
             Search, payment, and unlock require a backend (API, DB, webhooks) and do not work here.
-            The UI below is functional, but clicking &quot;Find lookalikes&quot; will not return results. For
-            a live version, deploy the app on Vercel / Railway / your own VPS — the Dockerfile is in
-            the repo.
+            The UI below is functional, but clicking &quot;Find lookalikes&quot; will not return
+            results. For a live version, deploy the app on Vercel / Railway / your own VPS — the
+            Dockerfile is in the repo.
           </p>
         </div>
       </div>
@@ -423,10 +421,7 @@ function LimitReachedBanner({ message }: { message: string | null }) {
       className="rounded-card border border-brand-warning/40 bg-brand-warning/10 p-5 text-sm"
     >
       <div className="flex items-start gap-3">
-        <AlertTriangle
-          className="mt-0.5 h-5 w-5 shrink-0 text-brand-warning"
-          aria-hidden="true"
-        />
+        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-brand-warning" aria-hidden="true" />
         <div>
           <p className="font-semibold text-brand-ink">Request limit reached</p>
           {message && <p className="mt-1 text-brand-muted">{message}</p>}

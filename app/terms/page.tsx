@@ -38,8 +38,8 @@ export default function TermsPage() {
 
       <h2 className="mt-10 text-title text-brand-ink">4. Limitation of liability</h2>
       <p className="mt-3 text-brand-muted">
-        Results are probabilistic. An 85% similarity is not proof of kinship or identity. We are
-        not liable for decisions made based on the results of the service.
+        Results are probabilistic. An 85% similarity is not proof of kinship or identity. We are not
+        liable for decisions made based on the results of the service.
       </p>
 
       <h2 className="mt-10 text-title text-brand-ink">5. Changes</h2>

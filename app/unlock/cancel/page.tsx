@@ -22,8 +22,8 @@ export default async function UnlockCancelPage({ searchParams }: UnlockCancelPag
         <p className="text-sm font-medium text-brand-subtle">Payment cancelled</p>
         <h1 className="mt-3 text-headline text-brand-ink">No charges were made</h1>
         <p className="mt-4 max-w-md text-base text-brand-muted">
-          You cancelled the payment on the provider&apos;s side. Premium matches are still
-          available — you can try again at any time.
+          You cancelled the payment on the provider&apos;s side. Premium matches are still available
+          — you can try again at any time.
         </p>
         <Link
           href={searchId ? `/search/${searchId}` : "/"}

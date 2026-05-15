@@ -34,8 +34,7 @@ body {
 /* Hero aurora — 2 радиальных gradient (фиолетовый сверху-слева,
    синий сверху-справа) над тёмным navy фоном. */
 .aurora {
-  background:
-    radial-gradient(ellipse 60% 50% at 20% 0%, rgba(139, 92, 246, 0.22), transparent 60%),
+  background: radial-gradient(ellipse 60% 50% at 20% 0%, rgba(139, 92, 246, 0.22), transparent 60%),
     radial-gradient(ellipse 60% 50% at 80% 10%, rgba(90, 143, 255, 0.16), transparent 60%);
 }
 
@@ -50,8 +49,7 @@ body {
 
 /* Hero spotlight — оставлено имя для совместимости. */
 .hero-spotlight {
-  background:
-    radial-gradient(ellipse 60% 50% at 20% 0%, rgba(139, 92, 246, 0.22), transparent 60%),
+  background: radial-gradient(ellipse 60% 50% at 20% 0%, rgba(139, 92, 246, 0.22), transparent 60%),
     radial-gradient(ellipse 60% 50% at 80% 10%, rgba(90, 143, 255, 0.16), transparent 60%);
 }
 

@@ -68,9 +68,7 @@ export default function MockCheckoutPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-brand-subtle">
                 Mock checkout · dev
               </p>
-              <p className="text-base font-semibold text-brand-ink">
-                Payment provider simulation
-              </p>
+              <p className="text-base font-semibold text-brand-ink">Payment provider simulation</p>
             </div>
           </div>
 

@@ -71,12 +71,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     const value = typeof rawSources === "string" ? JSON.parse(rawSources) : rawSources;
     parsedSources = sourcesSchema.parse(value);
   } catch (err) {
-    const message =
-      err instanceof z.ZodError ? err.issues[0]?.message : "Invalid sources list.";
-    return NextResponse.json(
-      { error: message ?? "Invalid sources list." },
-      { status: 400 },
-    );
+    const message = err instanceof z.ZodError ? err.issues[0]?.message : "Invalid sources list.";
+    return NextResponse.json({ error: message ?? "Invalid sources list." }, { status: 400 });
   }
 
   const buffer = Buffer.from(await photo.arrayBuffer());

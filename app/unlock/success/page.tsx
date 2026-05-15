@@ -114,8 +114,8 @@ export default function UnlockSuccessPage() {
           <div role="alert">
             <h1 className="text-headline text-brand-ink">Missing data</h1>
             <p className="mt-4 max-w-md text-base text-brand-muted">
-              The link is no longer valid. If you just paid, return to the home page and upload
-              your photo again; if the unlock went through, it will apply automatically.
+              The link is no longer valid. If you just paid, return to the home page and upload your
+              photo again; if the unlock went through, it will apply automatically.
             </p>
           </div>
         )}

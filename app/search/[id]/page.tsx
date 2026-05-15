@@ -73,7 +73,8 @@ export default function SearchPage({ params }: SearchPageProps) {
           onClick={() => router.push("/#upload")}
           className="inline-flex items-center gap-2 text-sm text-brand-muted hover:text-brand-ink"
         >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />New upload
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          New upload
         </button>
 
         <div className="mt-6 max-w-2xl">

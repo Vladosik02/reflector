@@ -11,10 +11,7 @@ import { cn } from "@/lib/cn";
  */
 export default function Hero({ className }: { className?: string }) {
   return (
-    <section
-      id="top"
-      className={cn("relative overflow-hidden bg-brand-bg", className)}
-    >
+    <section id="top" className={cn("relative overflow-hidden bg-brand-bg", className)}>
       <div className="aurora pointer-events-none absolute inset-0" aria-hidden="true" />
       <div
         className="orb pointer-events-none absolute -left-24 top-10 h-48 w-48 animate-subtle-pulse rounded-full bg-orb-violet md:-left-32 md:h-72 md:w-72"
@@ -84,10 +81,7 @@ export default function Hero({ className }: { className?: string }) {
  */
 function HeroVisual() {
   return (
-    <div
-      className="relative hidden h-[480px] lg:block"
-      aria-hidden="true"
-    >
+    <div className="relative hidden h-[480px] lg:block" aria-hidden="true">
       {/* Центральная карточка «вы» */}
       <div className="absolute left-8 top-8 h-[340px] w-[260px] rotate-[-4deg] overflow-hidden rounded-3xl border border-brand-line bg-gradient-to-br from-brand-accent/40 to-brand-info/40 shadow-lift">
         <div className="absolute inset-0 flex items-end justify-center pb-8">

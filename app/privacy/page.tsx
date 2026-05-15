@@ -13,9 +13,7 @@ export default function PrivacyPage() {
       title="Privacy Policy"
       intro="This document describes what data we collect, how we store it, and who we share it with. Not legal advice — published for transparency."
     >
-      <p className="text-brand-muted">
-        Effective from May 13, 2026. Last revision: May 13, 2026.
-      </p>
+      <p className="text-brand-muted">Effective from May 13, 2026. Last revision: May 13, 2026.</p>
 
       <h2 className="mt-10 text-title text-brand-ink">1. What data we collect</h2>
       <ul className="mt-3 list-disc space-y-2 pl-6 text-brand-muted">

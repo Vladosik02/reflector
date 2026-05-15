@@ -58,7 +58,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       // в естественном порядке (`md:order-none`). `overflow-hidden` НЕ на
       // внешнем `<div>` карточки — иначе бейдж `-top-3` клипится. Mesh-фон
       // вынесен в отдельный inner `<div>` со своим overflow-hidden.
-      <article className="group relative order-first md:-my-3 md:order-none">
+      <article className="group relative order-first md:order-none md:-my-3">
         {/* Ambient violet glow — отдельный слой за карточкой. */}
         <div
           aria-hidden="true"

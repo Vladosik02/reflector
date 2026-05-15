@@ -45,7 +45,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Reflector — find your lookalike by photo",
-    description: "Upload a single photo and discover who, out of millions of people, you look like the most.",
+    description:
+      "Upload a single photo and discover who, out of millions of people, you look like the most.",
   },
   robots: {
     index: true,

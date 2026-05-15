@@ -85,8 +85,7 @@ const config: Config = {
         /* Inset-окантовка: имитация тонкой внутренней линии. */
         "inset-line": "0 0 0 1px rgba(255,255,255,0.06) inset",
         /* Violet glow вокруг focus-visible / featured. */
-        "glow-violet":
-          "0 0 0 1px rgba(139,92,246,0.4), 0 24px 56px -20px rgba(139,92,246,0.55)",
+        "glow-violet": "0 0 0 1px rgba(139,92,246,0.4), 0 24px 56px -20px rgba(139,92,246,0.55)",
         glow: "0 0 0 1px rgba(139,92,246,0.4), 0 24px 56px -20px rgba(139,92,246,0.55)",
         /* Sticky-header при скролле. */
         header: "0 1px 0 rgba(255,255,255,0.04), 0 8px 24px -16px rgba(0,0,0,0.6)",

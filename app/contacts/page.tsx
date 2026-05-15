@@ -15,11 +15,7 @@ export default function ContactsPage() {
     >
       <dl className="mt-4 grid gap-6 sm:grid-cols-2">
         <Item title="Support" value="hello@reflector.app" href="mailto:hello@reflector.app" />
-        <Item
-          title="Privacy"
-          value="privacy@reflector.app"
-          href="mailto:privacy@reflector.app"
-        />
+        <Item title="Privacy" value="privacy@reflector.app" href="mailto:privacy@reflector.app" />
         <Item
           title="Partnerships"
           value="partners@reflector.app"

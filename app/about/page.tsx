@@ -27,9 +27,7 @@ export default function AboutPage() {
       <h2 className="mt-10 text-title text-brand-ink">Principles</h2>
       <ul className="mt-4 list-disc space-y-2 pl-6 text-brand-muted">
         <li>Privacy by default: photos are deleted after 24 hours, no exceptions.</li>
-        <li>
-          No dark patterns: explicit consent, transparent pricing, no hidden charges.
-        </li>
+        <li>No dark patterns: explicit consent, transparent pricing, no hidden charges.</li>
         <li>Accuracy over volume: ten plausible matches beat a hundred random ones.</li>
       </ul>
     </PageShell>

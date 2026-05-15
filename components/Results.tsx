@@ -56,8 +56,7 @@ export function Results({
       </div>
       <p className="mt-1 text-xs text-brand-subtle">
         Sorted by similarity score.
-        {lockedCount > 0 &&
-          ` Premium matches: ${lockedCount}${unlocked ? " (unlocked)." : "."}`}
+        {lockedCount > 0 && ` Premium matches: ${lockedCount}${unlocked ? " (unlocked)." : "."}`}
       </p>
 
       <div role="status" aria-live="polite">

@@ -21,18 +21,17 @@ export default function PhotoPolicyPage() {
         </li>
         <li>
           <strong className="text-brand-ink">Feature extraction.</strong> A numeric face embedding
-          is computed from the photo — a short vector that the model uses to find similar faces.
-          The embedding alone cannot be used to reconstruct the original photo.
+          is computed from the photo — a short vector that the model uses to find similar faces. The
+          embedding alone cannot be used to reconstruct the original photo.
         </li>
         <li>
-          <strong className="text-brand-ink">Storage.</strong> The photo is encrypted
-          (AES-256-GCM) and saved to object storage with TTL=24h. The encryption key stays on the
-          service side.
+          <strong className="text-brand-ink">Storage.</strong> The photo is encrypted (AES-256-GCM)
+          and saved to object storage with TTL=24h. The encryption key stays on the service side.
         </li>
         <li>
-          <strong className="text-brand-ink">Comparison.</strong> The embedding is compared
-          against the databases you selected in the filters. The top matches are returned with a
-          similarity score.
+          <strong className="text-brand-ink">Comparison.</strong> The embedding is compared against
+          the databases you selected in the filters. The top matches are returned with a similarity
+          score.
         </li>
         <li>
           <strong className="text-brand-ink">Deletion.</strong> After 24 hours, a background job
