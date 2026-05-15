@@ -16,14 +16,14 @@ const bodySchema = z.object({
 export async function POST(request: Request): Promise<NextResponse> {
   const sessionId = await readSessionId();
   if (!sessionId) {
-    return NextResponse.json({ error: "Сессия не инициализирована." }, { status: 401 });
+    return NextResponse.json({ error: "Session not initialised." }, { status: 401 });
   }
 
-  // Узкий лимит на инициацию оплаты: каждый legitimate платёж — это один POST.
+  // Tight limit on payment initiation: every legitimate payment is a single POST.
   const limit = checkRateLimit(getRateLimitKey("unlock", { sessionId, request }), 5);
   if (!limit.allowed) {
     return NextResponse.json(
-      { error: "Слишком много попыток. Подождите минуту." },
+      { error: "Too many attempts. Wait a minute." },
       {
         status: 429,
         headers: { "Retry-After": Math.ceil((limit.resetAt - Date.now()) / 1000).toString() },
@@ -41,7 +41,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   const search = await getSearchForSession(body.searchId, sessionId);
   if (!search) {
-    return NextResponse.json({ error: "Поиск не найден." }, { status: 404 });
+    return NextResponse.json({ error: "Search not found." }, { status: 404 });
   }
 
   const already = await isSearchUnlocked(search.id);
@@ -62,7 +62,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   } catch (err) {
     console.error("Failed to start unlock checkout", err);
     return NextResponse.json(
-      { error: "Платёжный провайдер временно недоступен. Попробуйте позже." },
+      { error: "The payment provider is temporarily unavailable. Try again later." },
       { status: 502 },
     );
   }

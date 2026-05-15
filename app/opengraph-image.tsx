@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Reflector — найди своего двойника по фото";
+export const alt = "Reflector — find your lookalike by photo";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -39,7 +39,7 @@ export default function OGImage() {
               textTransform: "uppercase",
             }}
           >
-            AI · Распознавание лиц
+            AI · Face recognition
           </span>
           <h1
             style={{
@@ -51,10 +51,10 @@ export default function OGImage() {
               maxWidth: 1000,
             }}
           >
-            Найдите своего двойника за 10 секунд
+            Find your lookalike in 10 seconds
           </h1>
           <p style={{ fontSize: 26, color: "#4D4D48", margin: 0, maxWidth: 900 }}>
-            Одно фото — топ совпадений из публичных баз, моделей, спортсменов и архивов.
+            One photo — top matches from public databases, models, athletes, and archives.
           </p>
         </div>
       </div>

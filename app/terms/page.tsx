@@ -2,51 +2,50 @@ import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 
 export const metadata: Metadata = {
-  title: "Условия использования",
-  description: "Условия использования сервиса Reflector — поиск двойников по фото.",
+  title: "Terms of Service",
+  description: "Terms of service for Reflector — photo-based lookalike search.",
 };
 
 export default function TermsPage() {
   return (
     <PageShell
-      eyebrow="Правовое"
-      title="Условия использования"
-      intro="Соглашение между вами и сервисом. Использование Reflector означает согласие с этим документом."
+      eyebrow="Legal"
+      title="Terms of Service"
+      intro="An agreement between you and the service. Using Reflector means you accept this document."
     >
-      <p className="text-brand-muted">Действует с 13 мая 2026 года.</p>
+      <p className="text-brand-muted">Effective from May 13, 2026.</p>
 
-      <h2 className="mt-10 text-title text-brand-ink">1. Что такое Reflector</h2>
+      <h2 className="mt-10 text-title text-brand-ink">1. What Reflector is</h2>
       <p className="mt-3 text-brand-muted">
-        Reflector — это онлайн-сервис, который сравнивает загруженное вами фото с базой лиц и
-        возвращает топ наиболее похожих. Сервис носит развлекательно-информационный характер и не
-        предназначен для идентификации в юридически значимых целях.
+        Reflector is an online service that compares your uploaded photo with a database of faces
+        and returns the most similar matches. The service is for entertainment and informational
+        purposes; it is not intended for identification in legally significant contexts.
       </p>
 
-      <h2 className="mt-10 text-title text-brand-ink">2. Что вы обещаете</h2>
+      <h2 className="mt-10 text-title text-brand-ink">2. What you agree to</h2>
       <ul className="mt-3 list-disc space-y-2 pl-6 text-brand-muted">
-        <li>Загружать только фото с лицом, права на которое у вас есть.</li>
-        <li>Не использовать сервис для слежки, доксинга или преследования других людей.</li>
-        <li>Не пытаться обходить лимиты, перебирать API, эмулировать клиентов.</li>
+        <li>Upload only photos of faces you have the right to use.</li>
+        <li>Do not use the service to stalk, dox, or harass other people.</li>
+        <li>Do not bypass rate limits, brute-force the API, or impersonate clients.</li>
       </ul>
 
-      <h2 className="mt-10 text-title text-brand-ink">3. Что мы обещаем</h2>
+      <h2 className="mt-10 text-title text-brand-ink">3. What we agree to</h2>
       <ul className="mt-3 list-disc space-y-2 pl-6 text-brand-muted">
-        <li>Стремиться к доступности 99.5% в месяц (без SLA на бесплатном тарифе).</li>
-        <li>Удалять загруженные фото в течение 24 часов.</li>
-        <li>Не использовать ваши фото для обучения моделей — ни наших, ни сторонних.</li>
+        <li>Aim for 99.5% monthly availability (no SLA on the free plan).</li>
+        <li>Delete uploaded photos within 24 hours.</li>
+        <li>Never use your photos to train models — neither ours nor anyone else&apos;s.</li>
       </ul>
 
-      <h2 className="mt-10 text-title text-brand-ink">4. Ограничение ответственности</h2>
+      <h2 className="mt-10 text-title text-brand-ink">4. Limitation of liability</h2>
       <p className="mt-3 text-brand-muted">
-        Результаты сервиса носят вероятностный характер. Совпадение в 85% — это не доказательство
-        родства или идентичности. Мы не несём ответственности за решения, принятые на основании
-        результатов сервиса.
+        Results are probabilistic. An 85% similarity is not proof of kinship or identity. We are not
+        liable for decisions made based on the results of the service.
       </p>
 
-      <h2 className="mt-10 text-title text-brand-ink">5. Изменения</h2>
+      <h2 className="mt-10 text-title text-brand-ink">5. Changes</h2>
       <p className="mt-3 text-brand-muted">
-        Мы можем менять эти условия с уведомлением за 14 дней (на email для авторизованных и
-        баннером на сайте — для остальных).
+        We may update these terms with 14 days&apos; notice (via email for registered users and a
+        banner on the site for everyone else).
       </p>
     </PageShell>
   );

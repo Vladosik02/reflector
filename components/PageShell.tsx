@@ -19,11 +19,11 @@ export default function PageShell({ title, eyebrow, intro, children }: PageShell
       <Header />
       <main className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-20">
         <header>
-          {eyebrow && <span className="text-sm font-medium text-brand-accent">{eyebrow}</span>}
-          <h1 className="mt-3 text-headline text-brand-ink">{title}</h1>
+          {eyebrow && <span className="text-sm font-medium text-brand-info">{eyebrow}</span>}
+          <h1 className="mt-3 text-headline text-white">{title}</h1>
           {intro && <p className="mt-4 text-base text-brand-muted">{intro}</p>}
         </header>
-        <article className="prose prose-zinc mt-10 max-w-none text-brand-ink">{children}</article>
+        <article className="prose prose-invert mt-10 max-w-none">{children}</article>
       </main>
       <Footer />
     </>

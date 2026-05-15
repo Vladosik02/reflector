@@ -18,7 +18,7 @@ interface BlurredPreviewProps {
  * (мы не утверждаем, что заблокированный человек = такой-то).
  */
 export function BlurredPreview({ blurhash }: BlurredPreviewProps) {
-  const alt = "Заблокированный результат, откройте чтобы увидеть";
+  const alt = "Locked result, unlock to view";
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -46,10 +46,10 @@ export function BlurredPreview({ blurhash }: BlurredPreviewProps) {
         aria-label={alt}
         className="h-full w-full blur-sm"
       />
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-brand-ink/10">
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-brand-bg/30">
         <Lock className="h-6 w-6 text-white drop-shadow" aria-hidden="true" />
       </div>
-      <span className="sr-only">Заблокировано. Откройте, чтобы увидеть.</span>
+      <span className="sr-only">Locked. Unlock to view.</span>
     </div>
   );
 }

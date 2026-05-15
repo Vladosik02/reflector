@@ -2,35 +2,31 @@ import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 
 export const metadata: Metadata = {
-  title: "Контакты",
-  description: "Как связаться с командой Reflector.",
+  title: "Contact",
+  description: "How to reach the Reflector team.",
 };
 
 export default function ContactsPage() {
   return (
     <PageShell
-      eyebrow="Контакты"
-      title="Напишите нам"
-      intro="Мы маленькая команда, отвечаем сами и обычно в течение одного рабочего дня."
+      eyebrow="Contact"
+      title="Get in touch"
+      intro="We are a small team. We reply ourselves, usually within one business day."
     >
       <dl className="mt-4 grid gap-6 sm:grid-cols-2">
-        <Item title="Поддержка" value="hello@reflector.app" href="mailto:hello@reflector.app" />
+        <Item title="Support" value="hello@reflector.app" href="mailto:hello@reflector.app" />
+        <Item title="Privacy" value="privacy@reflector.app" href="mailto:privacy@reflector.app" />
         <Item
-          title="Приватность"
-          value="privacy@reflector.app"
-          href="mailto:privacy@reflector.app"
-        />
-        <Item
-          title="Партнёрство"
+          title="Partnerships"
           value="partners@reflector.app"
           href="mailto:partners@reflector.app"
         />
-        <Item title="Пресса" value="press@reflector.app" href="mailto:press@reflector.app" />
+        <Item title="Press" value="press@reflector.app" href="mailto:press@reflector.app" />
       </dl>
 
       <p className="mt-10 text-sm text-brand-subtle">
-        Для юридически значимых обращений (запросы регуляторов, исполнительные документы) — пишите с
-        темой «Юридическое» на любой адрес выше.
+        For legal matters (regulatory requests, enforcement documents), use the subject line
+        &ldquo;Legal&rdquo; on any of the addresses above.
       </p>
     </PageShell>
   );
