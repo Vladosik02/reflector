@@ -10,14 +10,14 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request): Promise<NextResponse> {
   const sessionId = await readSessionId();
   if (!sessionId) {
-    return NextResponse.json({ error: "Сессия не инициализирована." }, { status: 401 });
+    return NextResponse.json({ error: "Session not initialised." }, { status: 401 });
   }
 
-  // /unlock/success опрашивает это каждые 800 мс ~ до 25 раз. Лимит 60/мин даёт запас.
+  // /unlock/success polls this every 800ms, up to ~25 times. A 60/min limit gives headroom.
   const limit = checkRateLimit(getRateLimitKey("unlock-status", { sessionId, request }), 60);
   if (!limit.allowed) {
     return NextResponse.json(
-      { error: "Слишком много запросов." },
+      { error: "Too many requests." },
       {
         status: 429,
         headers: { "Retry-After": Math.ceil((limit.resetAt - Date.now()) / 1000).toString() },

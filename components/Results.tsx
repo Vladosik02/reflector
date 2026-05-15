@@ -8,10 +8,10 @@ import type { PublicMatch } from "@/lib/face-match";
 import { BlurredPreview } from "./BlurredPreview";
 
 const SOURCE_LABELS: Record<PublicMatch["source"], string> = {
-  public: "Публичная база",
-  models: "Модели",
-  sports: "Спортсмены",
-  archive: "Архив",
+  public: "Public database",
+  models: "Models",
+  sports: "Athletes",
+  archive: "Archive",
 };
 
 interface ResultsProps {
@@ -37,9 +37,9 @@ export function Results({
   if (matches.length === 0) {
     return (
       <div className="mt-10 rounded-card border border-brand-line bg-brand-elevated p-8 text-center">
-        <p className="text-sm font-medium text-white">Совпадений не найдено</p>
+        <p className="text-sm font-medium text-white">No matches found</p>
         <p className="mt-2 text-xs text-brand-subtle">
-          Попробуйте другое фото или расширьте список источников.
+          Try a different photo or expand the list of sources.
         </p>
       </div>
     );
@@ -52,12 +52,12 @@ export function Results({
     <div className="mt-10 rounded-card border border-brand-line bg-brand-elevated p-6">
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-brand-accent" aria-hidden="true" />
-        <p className="text-sm font-semibold text-white">Найдено совпадений: {matches.length}</p>
+        <p className="text-sm font-semibold text-white">Matches found: {matches.length}</p>
       </div>
       <p className="mt-1 text-xs text-brand-subtle">
-        Отсортировано по проценту сходства.
+        Sorted by similarity score.
         {lockedCount > 0 &&
-          ` Премиум-совпадений: ${lockedCount}${unlocked ? " (разблокированы)." : "."}`}
+          ` Premium matches: ${lockedCount}${unlocked ? " (unlocked)." : "."}`}
       </p>
 
       <div role="status" aria-live="polite">
@@ -91,10 +91,10 @@ function UnlockBanner({
       <div className="flex items-start gap-3">
         <Lock className="mt-0.5 h-5 w-5 shrink-0 text-brand-accent" aria-hidden="true" />
         <div>
-          <p className="text-sm font-semibold text-white">Премиум-совпадения скрыты</p>
+          <p className="text-sm font-semibold text-white">Premium matches hidden</p>
           <p className="mt-1 text-xs leading-relaxed text-brand-muted">
-            Разблокируйте все премиум-совпадения этого поиска — модели, спортсмены, архивы — за одну
-            фикс. цену. Без подписки, без аккаунта.
+            Unlock every premium match in this search — models, athletes, archives — for one flat
+            fee. No subscription, no account.
           </p>
         </div>
       </div>
@@ -110,7 +110,7 @@ function UnlockBanner({
         )}
       >
         <Unlock className="h-4 w-4" aria-hidden="true" />
-        {isUnlocking ? "Открываем..." : `Открыть за ${formatPrice(price)}`}
+        {isUnlocking ? "Unlocking..." : `Unlock for ${formatPrice(price)}`}
       </button>
     </div>
   );
@@ -119,7 +119,7 @@ function UnlockBanner({
 function formatPrice(price: { amountMinor: number; currency: string }): string {
   const amount = price.amountMinor / 100;
   const symbol = price.currency.toLowerCase() === "rub" ? "₽" : price.currency.toUpperCase();
-  return `${amount.toLocaleString("ru-RU")} ${symbol}`;
+  return `${amount.toLocaleString("en-US")} ${symbol}`;
 }
 
 interface MatchCardProps {
@@ -145,7 +145,7 @@ function MatchCard({ userPhotoUrl, match }: MatchCardProps) {
       )}
 
       <div className={cn("gap-px bg-brand-line", userPhotoUrl ? "grid grid-cols-2" : "block")}>
-        {userPhotoUrl && <PhotoFrame src={userPhotoUrl} label="Вы" />}
+        {userPhotoUrl && <PhotoFrame src={userPhotoUrl} label="You" />}
         <div className="relative aspect-[3/4] bg-brand-bg">
           {isLocked && "blurhash" in match ? (
             <BlurredPreview blurhash={match.blurhash} />
@@ -153,7 +153,7 @@ function MatchCard({ userPhotoUrl, match }: MatchCardProps) {
             "imageUrl" in match && (
               <Image
                 src={match.imageUrl}
-                alt={`Совпадение: ${match.name}`}
+                alt={`Match: ${match.name}`}
                 fill
                 sizes="(min-width: 1024px) 200px, (min-width: 640px) 33vw, 50vw"
                 className="object-cover"
@@ -164,7 +164,7 @@ function MatchCard({ userPhotoUrl, match }: MatchCardProps) {
             )
           )}
           <span className="absolute bottom-1 left-1 rounded-pill bg-brand-bg/80 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-white backdrop-blur">
-            Совпадение
+            Match
           </span>
         </div>
       </div>
@@ -174,14 +174,14 @@ function MatchCard({ userPhotoUrl, match }: MatchCardProps) {
           <p className="truncate text-sm font-semibold text-white">{match.name}</p>
           <span
             className="text-sm font-semibold tabular-nums text-brand-accent"
-            aria-label={`Сходство ${percent} процентов`}
+            aria-label={`${percent}% similarity`}
           >
             {percent}%
           </span>
         </div>
         <p className="text-xs text-brand-subtle">
           {SOURCE_LABELS[match.source]}
-          {isLocked && " · скрыто"}
+          {isLocked && " · hidden"}
         </p>
         <SimilarityBar percent={percent} dimmed={isLocked} />
       </div>
@@ -239,10 +239,10 @@ function LimitedBadge({ expiresAt }: { expiresAt: string }) {
           ? "border border-brand-line bg-brand-elevated text-brand-subtle"
           : "border border-brand-warning/30 bg-brand-warning/15 text-brand-warning",
       )}
-      title={expired ? "Срок доступа истёк" : "Лимитированный источник"}
+      title={expired ? "Access has expired" : "Limited source"}
     >
       <Clock className={cn("h-3 w-3", !expired && "text-brand-warning")} aria-hidden="true" />
-      {expired ? "Срок истёк" : remaining.formatted}
+      {expired ? "Expired" : remaining.formatted}
     </div>
   );
 }

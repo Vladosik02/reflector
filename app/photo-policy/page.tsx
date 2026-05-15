@@ -2,49 +2,51 @@ import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 
 export const metadata: Metadata = {
-  title: "Обработка фото",
-  description: "Технические детали обработки и хранения загруженных фото в Reflector.",
+  title: "Photo Policy",
+  description: "Technical details about how uploaded photos are processed and stored in Reflector.",
 };
 
 export default function PhotoPolicyPage() {
   return (
     <PageShell
-      eyebrow="Правовое"
-      title="Обработка фото"
-      intro="Технические подробности — что происходит с фото от момента загрузки до удаления."
+      eyebrow="Legal"
+      title="Photo Policy"
+      intro="Technical details — what happens to a photo from the moment it is uploaded until it is deleted."
     >
-      <h2 className="mt-2 text-title text-brand-ink">Жизненный цикл загруженного фото</h2>
+      <h2 className="mt-2 text-title text-brand-ink">Lifecycle of an uploaded photo</h2>
       <ol className="mt-4 list-decimal space-y-3 pl-6 text-brand-muted">
         <li>
-          <strong className="text-brand-ink">Передача.</strong> Фото загружается по HTTPS (TLS 1.3).
-          Сервер не пишет тело запроса в логи.
+          <strong className="text-brand-ink">Transfer.</strong> The photo is uploaded over HTTPS
+          (TLS 1.3). The server does not write the request body to logs.
         </li>
         <li>
-          <strong className="text-brand-ink">Извлечение признаков.</strong> Из фото вычисляется
-          числовой эмбеддинг лица — это короткий вектор, по которому модель ищет похожие лица. Сам
-          эмбеддинг не позволяет восстановить исходное фото.
+          <strong className="text-brand-ink">Feature extraction.</strong> A numeric face embedding
+          is computed from the photo — a short vector that the model uses to find similar faces.
+          The embedding alone cannot be used to reconstruct the original photo.
         </li>
         <li>
-          <strong className="text-brand-ink">Хранение.</strong> Фото зашифровано (AES-256-GCM)
-          сохраняется в объектном хранилище с TTL=24h. Ключ шифрования — на стороне сервиса.
+          <strong className="text-brand-ink">Storage.</strong> The photo is encrypted
+          (AES-256-GCM) and saved to object storage with TTL=24h. The encryption key stays on the
+          service side.
         </li>
         <li>
-          <strong className="text-brand-ink">Сравнение.</strong> Эмбеддинг сверяется с базами,
-          выбранными вами в фильтрах. Возвращается топ совпадений с процентом сходства.
+          <strong className="text-brand-ink">Comparison.</strong> The embedding is compared
+          against the databases you selected in the filters. The top matches are returned with a
+          similarity score.
         </li>
         <li>
-          <strong className="text-brand-ink">Удаление.</strong> По истечении 24 часов фоновая задача
-          удаляет файл из хранилища и затирает связанные с ним записи в БД (soft delete → через 7
-          дней — physical delete).
+          <strong className="text-brand-ink">Deletion.</strong> After 24 hours, a background job
+          deletes the file from storage and wipes related database records (soft delete → physical
+          delete after 7 days).
         </li>
       </ol>
 
-      <h2 className="mt-10 text-title text-brand-ink">Что мы НЕ делаем</h2>
+      <h2 className="mt-10 text-title text-brand-ink">What we do NOT do</h2>
       <ul className="mt-3 list-disc space-y-2 pl-6 text-brand-muted">
-        <li>Не используем ваши фото для обучения моделей.</li>
-        <li>Не передаём фото или эмбеддинги третьим лицам.</li>
-        <li>Не анализируем фото на эмоции, возраст, пол — только сравнение по геометрии.</li>
-        <li>Не сохраняем фото после истечения TTL ни в одном бэкапе.</li>
+        <li>We do not use your photos to train models.</li>
+        <li>We do not share photos or embeddings with third parties.</li>
+        <li>We do not analyse photos for emotion, age, or gender — only geometric comparison.</li>
+        <li>We do not retain photos after TTL expiry in any backup.</li>
       </ul>
     </PageShell>
   );

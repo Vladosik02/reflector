@@ -74,11 +74,11 @@ export default function UploadSection({ className }: { className?: string }) {
       }
 
       if (!ACCEPT.includes(next.type)) {
-        setError("Поддерживаются только JPG, PNG и WEBP.");
+        setError("Only JPG, PNG and WEBP are supported.");
         return;
       }
       if (next.size > MAX_BYTES) {
-        setError("Файл слишком большой. Максимум 15 МБ.");
+        setError("File too large. Max 15 MB.");
         return;
       }
 
@@ -100,7 +100,7 @@ export default function UploadSection({ className }: { className?: string }) {
   const handleSubmit = async () => {
     if (!file) return;
     if (activeFilters.size === 0) {
-      setError("Выберите хотя бы один источник поиска.");
+      setError("Select at least one search source.");
       return;
     }
 
@@ -127,14 +127,14 @@ export default function UploadSection({ className }: { className?: string }) {
       if (res.status === 429) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         setLimitReached(true);
-        setError(body.error ?? "Достигнут лимит запросов. Попробуйте позже.");
+        setError(body.error ?? "Request limit reached. Try again later.");
         setStatus("error");
         return;
       }
 
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        setError(body.error ?? `Ошибка ${res.status}. Попробуйте ещё раз.`);
+        setError(body.error ?? `Error ${res.status}. Please try again.`);
         setStatus("error");
         return;
       }
@@ -144,7 +144,7 @@ export default function UploadSection({ className }: { className?: string }) {
       setStatus("success");
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") return;
-      setError("Не удалось связаться с сервером. Проверьте соединение.");
+      setError("Failed to reach the server. Check your connection.");
       setStatus("error");
     }
   };
@@ -173,7 +173,7 @@ export default function UploadSection({ className }: { className?: string }) {
 
         {/* Desktop-only богатый блок: eyebrow + h2 + description. */}
         <div className="hidden max-w-2xl lg:block">
-          <span className="text-sm font-medium text-brand-info">Найти двойника</span>
+          <span className="text-sm font-medium text-brand-info">Find your lookalike</span>
           <h2 className="mt-3 text-headline text-white">{upload.title}</h2>
           <p className="mt-4 text-base text-brand-muted">{upload.description}</p>
         </div>
@@ -182,10 +182,10 @@ export default function UploadSection({ className }: { className?: string }) {
 
         <div className="mt-6 grid gap-6 lg:mt-12 lg:grid-cols-[280px_1fr]">
           <aside className="glass-top relative hidden rounded-card border border-brand-line bg-brand-elevated p-6 shadow-card lg:block">
-            <h3 className="text-sm font-semibold text-white">Источники поиска</h3>
+            <h3 className="text-sm font-semibold text-white">Search sources</h3>
             <p className="mt-2 text-xs text-brand-subtle">
-              Публичная база — бесплатно. Премиум-источники (модели, спорт, архивы) — за фикс. цену,
-              разово, без подписки.
+              The public database is free. Premium sources (models, sports, archives) cost a flat,
+              one-time fee — no subscription.
             </p>
 
             <div className="mt-5 space-y-2">
@@ -206,7 +206,7 @@ export default function UploadSection({ className }: { className?: string }) {
                       {f.label}
                       {isPremium && (
                         <span className="rounded-pill border border-brand-warning/30 bg-brand-warning/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-brand-warning">
-                          Премиум
+                          Premium
                         </span>
                       )}
                     </span>
@@ -223,8 +223,8 @@ export default function UploadSection({ className }: { className?: string }) {
             </div>
 
             <p className="mt-6 rounded-btn border border-brand-line bg-brand-surface p-3 text-xs leading-relaxed text-brand-muted">
-              Премиум-источники сначала возвращаются <span className="font-medium text-white">размытыми</span>.
-              Один платёж — и все размытые совпадения этого поиска становятся видимыми.
+              Premium sources are returned <span className="font-medium text-white">blurred</span> at
+              first. One payment reveals every blurred match in this search.
             </p>
           </aside>
 
@@ -271,7 +271,7 @@ export default function UploadSection({ className }: { className?: string }) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={previewUrl}
-                    alt="Превью загруженного фото"
+                    alt="Uploaded photo preview"
                     className="h-40 w-40 rounded-card object-cover shadow-card md:h-48 md:w-48"
                   />
                   <p className="text-sm text-brand-muted">{file?.name}</p>
@@ -281,7 +281,7 @@ export default function UploadSection({ className }: { className?: string }) {
                     className="inline-flex items-center gap-1 rounded-btn px-2 py-1 text-xs text-brand-subtle underline-offset-2 hover:text-white hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
                   >
                     <X className="h-3 w-3" aria-hidden="true" />
-                    Выбрать другое фото
+                    Choose another photo
                   </button>
                 </div>
               </div>
@@ -349,7 +349,7 @@ export default function UploadSection({ className }: { className?: string }) {
                 )}
               >
                 {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-                {isSubmitting ? "Анализируем..." : "Найти двойников"}
+                {isSubmitting ? "Analyzing photo…" : "Find lookalikes"}
               </button>
             )}
           </div>
@@ -387,12 +387,13 @@ function StaticPreviewBanner() {
         <Info className="mt-0.5 h-5 w-5 shrink-0 text-brand-info" aria-hidden="true" />
         <div>
           <p className="text-sm font-semibold text-white">
-            Это статический preview на GitHub Pages
+            This is a static preview on GitHub Pages
           </p>
           <p className="mt-1 text-xs leading-relaxed text-brand-muted">
-            Поиск, оплата и разблокировка требуют серверной части (API, БД, webhook&apos;и) и здесь
-            не работают. UI ниже — рабочий, но клик «Найти двойников» не вернёт результаты. Для
-            живой версии разверните app на Vercel / Railway / своём VPS — Dockerfile в репозитории.
+            Search, payment, and unlock require a backend (API, DB, webhooks) and do not work here.
+            The UI below is functional, but clicking &quot;Find lookalikes&quot; will not return results. For
+            a live version, deploy the app on Vercel / Railway / your own VPS — the Dockerfile is in
+            the repo.
           </p>
         </div>
       </div>
@@ -402,7 +403,7 @@ function StaticPreviewBanner() {
         rel="noreferrer noopener"
         className="inline-flex shrink-0 items-center gap-2 rounded-btn border border-brand-line bg-brand-elevated px-4 py-2 text-sm font-medium text-white hover:bg-brand-surface"
       >
-        Deploy на Vercel
+        Deploy to Vercel
         <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
       </a>
     </div>
@@ -427,10 +428,10 @@ function LimitReachedBanner({ message }: { message: string | null }) {
           aria-hidden="true"
         />
         <div>
-          <p className="font-semibold text-brand-ink">Достигнут лимит запросов</p>
+          <p className="font-semibold text-brand-ink">Request limit reached</p>
           {message && <p className="mt-1 text-brand-muted">{message}</p>}
           <p className="mt-2 text-xs text-brand-subtle">
-            Попробуйте через несколько минут. Лимит сбрасывается автоматически.
+            Try again in a few minutes. The limit resets automatically.
           </p>
         </div>
       </div>
@@ -443,7 +444,7 @@ function ResultsSkeleton() {
     <div className="mt-10 rounded-card border border-brand-line bg-brand-elevated p-6">
       <div className="flex items-center gap-2">
         <Loader2 className="h-4 w-4 animate-spin text-brand-accent" aria-hidden="true" />
-        <p className="text-sm font-semibold text-white">Анализируем фото...</p>
+        <p className="text-sm font-semibold text-white">Analyzing photo…</p>
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[0, 1, 2, 3, 4, 5].map((n) => (
@@ -461,10 +462,10 @@ function ResultsSkeleton() {
 function ResultsPlaceholder() {
   return (
     <div className="mt-10 rounded-card border border-brand-line bg-brand-elevated p-6">
-      <p className="text-sm font-semibold text-white">Результаты появятся здесь</p>
+      <p className="text-sm font-semibold text-white">Results will appear here</p>
       <p className="mt-1 text-xs text-brand-subtle">
-        Загрузите фото — увидите топ совпадений сразу. Премиум-источники придут размытыми;
-        разблокируете одной оплатой за фикс. цену.
+        Upload a photo and see the top matches right away. Premium sources arrive blurred — unlock
+        them all with a single one-time payment.
       </p>
       <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
         {[1, 2, 3, 4].map((n) => (

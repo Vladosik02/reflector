@@ -8,10 +8,10 @@ import Footer from "@/components/Footer";
 import { cn } from "@/lib/cn";
 
 /**
- * Имитация Stripe Checkout — только для разработки.
- * Кнопка «Оплатить» постит на /api/webhooks/mock (тот самый webhook, что Stripe вызывал бы),
- * затем редиректит на success_url. Это позволяет end-to-end протестировать unlock-флоу
- * без реального мерчанта.
+ * Stripe Checkout impersonation — dev only.
+ * The "Pay" button POSTs to /api/webhooks/mock (the same webhook Stripe would call)
+ * and then redirects to success_url. This lets us end-to-end test the unlock flow
+ * without a real merchant.
  */
 export default function MockCheckoutPage() {
   const params = useSearchParams();
@@ -44,13 +44,13 @@ export default function MockCheckoutPage() {
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        setError(body.error ?? "Не удалось завершить оплату.");
+        setError(body.error ?? "Failed to complete the payment.");
         setSubmitting(false);
         return;
       }
       router.push(success);
     } catch {
-      setError("Сетевая ошибка. Попробуйте ещё раз.");
+      setError("Network error. Try again.");
       setSubmitting(false);
     }
   };
@@ -69,15 +69,15 @@ export default function MockCheckoutPage() {
                 Mock checkout · dev
               </p>
               <p className="text-base font-semibold text-brand-ink">
-                Имитация платёжного провайдера
+                Payment provider simulation
               </p>
             </div>
           </div>
 
           <dl className="mt-8 space-y-3 text-sm">
-            <Row label="Услуга" value="Разблокировка премиум-источников" />
-            <Row label="Поиск" value={searchId ?? "—"} mono />
-            <Row label="Сумма" value={formatAmount(amount, currency)} />
+            <Row label="Service" value="Premium sources unlock" />
+            <Row label="Search" value={searchId ?? "—"} mono />
+            <Row label="Amount" value={formatAmount(amount, currency)} />
           </dl>
 
           {error && (
@@ -102,7 +102,7 @@ export default function MockCheckoutPage() {
               )}
             >
               {submitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-              {submitting ? "Обработка..." : `Оплатить ${formatAmount(amount, currency)}`}
+              {submitting ? "Processing..." : `Pay ${formatAmount(amount, currency)}`}
             </button>
             <button
               type="button"
@@ -111,13 +111,13 @@ export default function MockCheckoutPage() {
               className="inline-flex items-center justify-center gap-2 rounded-btn border border-brand-line bg-brand-surface px-5 py-3 text-sm font-medium text-brand-muted hover:text-brand-ink"
             >
               <X className="h-4 w-4" aria-hidden="true" />
-              Отменить
+              Cancel
             </button>
           </div>
 
           <p className="mt-6 text-xs leading-relaxed text-brand-subtle">
-            Это dev-страница. В production она будет заменена на Stripe Checkout (или ЮKassa),
-            хостимый платёжным провайдером. Никаких реальных списаний здесь не происходит.
+            This is a dev-only page. In production it will be replaced by Stripe Checkout (or
+            another provider) hosted by the payment provider. No real charges happen here.
           </p>
         </div>
       </main>
@@ -136,9 +136,9 @@ function Row({ label, value, mono }: { label: string; value: string; mono?: bool
 }
 
 /**
- * Защита от open-redirect: возвращаем только путь+query, отбрасывая хост.
- * Mock-провайдер передаёт абсолютный URL `${env.NEXT_PUBLIC_SITE_URL}/unlock/...`;
- * мы извлекаем только pathname+search и редиректим относительно текущего origin.
+ * Open-redirect guard: we keep only the path+query and drop the host.
+ * The mock provider passes an absolute URL `${env.NEXT_PUBLIC_SITE_URL}/unlock/...`;
+ * we extract pathname+search and redirect relative to the current origin.
  */
 function sanitizeRedirect(value: string | null): string | null {
   if (!value) return null;
@@ -158,5 +158,5 @@ function formatAmount(amount: string | null, currency: string): string {
   const num = Number.parseInt(amount, 10);
   if (Number.isNaN(num)) return "—";
   const symbol = currency.toLowerCase() === "rub" ? "₽" : currency.toUpperCase();
-  return `${(num / 100).toLocaleString("ru-RU")} ${symbol}`;
+  return `${(num / 100).toLocaleString("en-US")} ${symbol}`;
 }

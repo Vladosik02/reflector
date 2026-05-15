@@ -5,22 +5,22 @@ import type { FaceMatchProvider, Match, MatchRequest, MatchResponse, MatchSource
 const PREMIUM_SOURCES: ReadonlySet<MatchSource> = new Set(["models", "sports", "archive"]);
 
 const CATALOG: Array<Omit<Match, "similarity" | "expiresAt" | "blurhash" | "gated">> = [
-  { id: "p-1", name: "Алексей В., актёр", source: "public", imageUrl: "/mock/p1.svg" },
-  { id: "p-2", name: "Мария К., певица", source: "public", imageUrl: "/mock/p2.svg" },
-  { id: "p-3", name: "Дмитрий Л., телеведущий", source: "public", imageUrl: "/mock/p3.svg" },
-  { id: "m-1", name: "Анна П., модель", source: "models", imageUrl: "/mock/m1.svg" },
-  { id: "m-2", name: "София Р., модель", source: "models", imageUrl: "/mock/m2.svg" },
-  { id: "s-1", name: "Игорь С., теннис", source: "sports", imageUrl: "/mock/s1.svg" },
-  { id: "s-2", name: "Ольга М., биатлон", source: "sports", imageUrl: "/mock/s2.svg" },
-  { id: "a-1", name: "Архив, 1956", source: "archive", imageUrl: "/mock/a1.svg" },
-  { id: "a-2", name: "Архив, 1923", source: "archive", imageUrl: "/mock/a2.svg" },
+  { id: "p-1", name: "Alex V., actor", source: "public", imageUrl: "/mock/p1.svg" },
+  { id: "p-2", name: "Maria K., singer", source: "public", imageUrl: "/mock/p2.svg" },
+  { id: "p-3", name: "Dmitry L., TV host", source: "public", imageUrl: "/mock/p3.svg" },
+  { id: "m-1", name: "Anna P., model", source: "models", imageUrl: "/mock/m1.svg" },
+  { id: "m-2", name: "Sofia R., model", source: "models", imageUrl: "/mock/m2.svg" },
+  { id: "s-1", name: "Igor S., tennis", source: "sports", imageUrl: "/mock/s1.svg" },
+  { id: "s-2", name: "Olga M., biathlon", source: "sports", imageUrl: "/mock/s2.svg" },
+  { id: "a-1", name: "Archive, 1956", source: "archive", imageUrl: "/mock/a1.svg" },
+  { id: "a-2", name: "Archive, 1923", source: "archive", imageUrl: "/mock/a2.svg" },
 ];
 
 /**
- * Детерминированный мок: одинаковые байты на входе → одинаковый порядок матчей.
- * Это нужно для двух вещей:
- *  - Воспроизводимое end-to-end тестирование unlock-флоу.
- *  - Возможность пересчитать матчи из photoHash, не храня само фото.
+ * Deterministic mock: identical bytes in → identical match order.
+ * This is needed for two reasons:
+ *  - Reproducible end-to-end testing of the unlock flow.
+ *  - The ability to recompute matches from photoHash without storing the photo itself.
  */
 export const mockProvider: FaceMatchProvider = {
   name: "mock",

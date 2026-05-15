@@ -7,10 +7,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 /**
- * Промежуточная страница после оплаты:
- *  - опрашивает /api/unlock/status каждые 800 мс;
- *  - как только unlocked=true (webhook отработал) — редиректит на /search/[id];
- *  - если за 20 секунд webhook не пришёл, показывает CTA «Попробовать ещё раз».
+ * Interstitial page shown after payment:
+ *  - polls /api/unlock/status every 800ms;
+ *  - once unlocked=true (the webhook fired), redirects to /search/[id];
+ *  - if the webhook does not arrive within 20 seconds, shows a "Try again" CTA.
  */
 export default function UnlockSuccessPage() {
   const params = useSearchParams();
@@ -27,7 +27,7 @@ export default function UnlockSuccessPage() {
 
     const controller = new AbortController();
     let attempts = 0;
-    const maxAttempts = 25; // ~20 сек при интервале 800 мс
+    const maxAttempts = 25; // ~20s at an 800ms interval
 
     const poll = async () => {
       while (!controller.signal.aborted && attempts < maxAttempts) {
@@ -49,7 +49,7 @@ export default function UnlockSuccessPage() {
           }
         } catch (err) {
           if (err instanceof DOMException && err.name === "AbortError") return;
-          // network blip — продолжаем поллинг
+          // network blip — keep polling
         }
         await new Promise<void>((resolve) => {
           const t = setTimeout(resolve, 800);
@@ -77,27 +77,27 @@ export default function UnlockSuccessPage() {
         {status === "polling" && (
           <>
             <Loader2 className="h-10 w-10 animate-spin text-brand-accent" aria-hidden="true" />
-            <h1 className="mt-6 text-headline text-brand-ink">Подтверждаем платёж...</h1>
+            <h1 className="mt-6 text-headline text-brand-ink">Confirming payment...</h1>
             <p className="mt-4 max-w-md text-base text-brand-muted">
-              Это занимает несколько секунд. Не закрывайте страницу — мы откроем результаты сразу,
-              как только провайдер подтвердит оплату.
+              This takes a few seconds. Please keep this page open — we will open your results as
+              soon as the provider confirms the payment.
             </p>
           </>
         )}
         {status === "ready" && (
           <>
             <CheckCircle2 className="h-10 w-10 text-emerald-600" aria-hidden="true" />
-            <h1 className="mt-6 text-headline text-brand-ink">Готово</h1>
-            <p className="mt-4 max-w-md text-base text-brand-muted">Открываем результаты...</p>
+            <h1 className="mt-6 text-headline text-brand-ink">Done</h1>
+            <p className="mt-4 max-w-md text-base text-brand-muted">Opening your results...</p>
           </>
         )}
         {status === "timeout" && (
           <>
-            <h1 className="text-headline text-brand-ink">Платёж в обработке</h1>
+            <h1 className="text-headline text-brand-ink">Payment is being processed</h1>
             <p className="mt-4 max-w-md text-base text-brand-muted">
-              Подтверждение от провайдера задерживается. Это нормально для первого платежа.
-              Перейдите к результатам — мы откроем премиум-совпадения, как только подтверждение
-              придёт.
+              The provider is taking longer than usual to confirm. This is normal for a first
+              payment. Go to results — we will unlock the premium matches as soon as the
+              confirmation arrives.
             </p>
             {searchId && (
               <button
@@ -105,17 +105,17 @@ export default function UnlockSuccessPage() {
                 onClick={() => router.push(`/search/${searchId}`)}
                 className="mt-8 inline-flex items-center gap-2 rounded-btn bg-cta-violet px-5 py-3 text-sm font-medium text-white shadow-cta transition-all hover:-translate-y-0.5 hover:shadow-cta-hover"
               >
-                Открыть результаты
+                Go to results
               </button>
             )}
           </>
         )}
         {status === "error" && (
           <div role="alert">
-            <h1 className="text-headline text-brand-ink">Не хватает данных</h1>
+            <h1 className="text-headline text-brand-ink">Missing data</h1>
             <p className="mt-4 max-w-md text-base text-brand-muted">
-              Ссылка устарела. Если вы только что оплатили — вернитесь на главную и загрузите фото
-              ещё раз; если разблокировка прошла, она применится автоматически.
+              The link is no longer valid. If you just paid, return to the home page and upload
+              your photo again; if the unlock went through, it will apply automatically.
             </p>
           </div>
         )}

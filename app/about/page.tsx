@@ -2,36 +2,35 @@ import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 
 export const metadata: Metadata = {
-  title: "О нас",
-  description: "Команда и миссия сервиса Reflector.",
+  title: "About",
+  description: "The team and the mission behind Reflector.",
 };
 
 export default function AboutPage() {
   return (
     <PageShell
-      eyebrow="О нас"
-      title="Поиск двойника как ритуал, а не как слежка"
-      intro="Reflector — небольшой проект о том, как мы все вписываемся в большую картину человеческих лиц."
+      eyebrow="About us"
+      title="Lookalike search as a ritual, not surveillance"
+      intro="Reflector is a small project about how we all fit into the larger picture of human faces."
     >
       <p className="mt-2 text-brand-muted">
-        Идея простая: на планете живёт восемь миллиардов человек. Кто-то из них наверняка похож на
-        вас — в чертах, в линиях, в выражении. Найти этого человека — забавный эксперимент, повод
-        посмотреть на себя со стороны.
+        The idea is simple: eight billion people live on this planet. Some of them are bound to look
+        like you — in features, in lines, in expression. Finding that person is a fun experiment, a
+        chance to see yourself from the outside.
       </p>
 
       <p className="mt-4 text-brand-muted">
-        Мы делаем это аккуратно: не торгуем вашими данными, не показываем рекламу поверх
-        результатов, не тренируем модели на загруженных фото. Просто инструмент — и сразу чистое
-        окно после него.
+        We do it carefully: we do not sell your data, we do not show ads on top of results, and we
+        do not train models on uploaded photos. Just the tool — and a clean window after it.
       </p>
 
-      <h2 className="mt-10 text-title text-brand-ink">Принципы</h2>
+      <h2 className="mt-10 text-title text-brand-ink">Principles</h2>
       <ul className="mt-4 list-disc space-y-2 pl-6 text-brand-muted">
-        <li>Приватность по умолчанию: фото удаляется через 24 часа, без исключений.</li>
+        <li>Privacy by default: photos are deleted after 24 hours, no exceptions.</li>
         <li>
-          Никакого dark pattern: явные согласия, понятные тарифы, отсутствие скрытых списаний.
+          No dark patterns: explicit consent, transparent pricing, no hidden charges.
         </li>
-        <li>Точность важнее количества: лучше топ-10 правдоподобных, чем сотня случайных.</li>
+        <li>Accuracy over volume: ten plausible matches beat a hundred random ones.</li>
       </ul>
     </PageShell>
   );

@@ -18,21 +18,21 @@ export default function Footer() {
           <div>
             <p className="text-sm font-semibold text-white">{brandName}</p>
             <p className="mt-3 max-w-xs text-sm text-brand-muted">
-              Сервис поиска двойников на основе нейросетевого анализа лица. Фото удаляются
-              автоматически через 24 часа и не используются для обучения моделей.
+              A lookalike search service powered by neural-network face analysis. Photos are deleted
+              automatically after 24 hours and are never used to train models.
             </p>
           </div>
 
-          <FooterColumn title="Продукт" links={footerLinks.product} />
-          <FooterColumn title="Компания" links={footerLinks.company} />
-          <FooterColumn title="Правовое" links={footerLinks.legal} />
+          <FooterColumn title="Product" links={footerLinks.product} />
+          <FooterColumn title="Company" links={footerLinks.company} />
+          <FooterColumn title="Legal" links={footerLinks.legal} />
         </div>
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-brand-line pt-6 text-xs text-brand-subtle md:flex-row md:items-center">
           <span>
-            © {year} {brandName}. Все права защищены.
+            © {year} {brandName}. All rights reserved.
           </span>
-          <span>Сделано с заботой о приватности.</span>
+          <span>Built with privacy in mind.</span>
         </div>
       </div>
     </footer>

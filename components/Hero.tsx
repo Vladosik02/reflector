@@ -94,7 +94,7 @@ function HeroVisual() {
           <UserCircle2 className="h-40 w-40 text-white/30" />
         </div>
         <span className="absolute bottom-3 left-3 rounded-pill bg-black/40 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur">
-          Вы
+          You
         </span>
       </div>
 
@@ -152,7 +152,7 @@ function MatchTile({ className, percent, gradient, accent, locked = false }: Mat
       </div>
       <div className="flex items-center justify-between px-3 py-2">
         <span className="text-[10px] font-medium uppercase tracking-wide text-brand-subtle">
-          {locked ? "Скрыто" : "Совпадение"}
+          {locked ? "Hidden" : "Match"}
         </span>
         <span className={cn("text-sm font-bold tabular-nums", accentText)}>{percent}%</span>
       </div>

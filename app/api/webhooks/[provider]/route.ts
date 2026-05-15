@@ -9,8 +9,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
- * Универсальный webhook handler. Маршрут должен совпадать с активным `PAYMENT_PROVIDER` —
- * это защищает от того, что злоумышленник постучится на `/api/webhooks/stripe` в dev-режиме.
+ * Generic webhook handler. The route must match the active `PAYMENT_PROVIDER` —
+ * this prevents an attacker from hitting `/api/webhooks/stripe` while in dev mode.
  */
 export async function POST(
   request: Request,
@@ -19,16 +19,16 @@ export async function POST(
   const { provider: providerName } = await ctx.params;
 
   if (providerName !== env.PAYMENT_PROVIDER) {
-    // 503: маршрут существует, но активный провайдер другой. Используем 503, чтобы
-    // Stripe в случае мис-конфигурации делал retry, а атакующий не получал «404 not found».
+    // 503: the route exists, but the active provider is different. We use 503 so
+    // that Stripe retries on misconfiguration, while an attacker does not get a plain 404.
     return NextResponse.json(
       { error: `Webhook provider not active. Active: ${env.PAYMENT_PROVIDER}` },
       { status: 503 },
     );
   }
 
-  // Webhook'и приходят от внешнего провайдера — sessionId недоступен. Rate-limit здесь —
-  // defence-in-depth поверх подписи; IP доверяем только при TRUST_PROXY_HEADERS=true.
+  // Webhooks come from an external provider — sessionId is unavailable. Rate limiting here
+  // is defence-in-depth on top of signature verification; IP is trusted only when TRUST_PROXY_HEADERS=true.
   const limit = checkRateLimit(getRateLimitKey(`webhook:${providerName}`, { request }), 120);
   if (!limit.allowed) {
     return NextResponse.json({ error: "Too many webhook attempts" }, { status: 429 });

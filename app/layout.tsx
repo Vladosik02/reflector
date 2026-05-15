@@ -15,17 +15,17 @@ const siteUrl = env.NEXT_PUBLIC_SITE_URL;
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Reflector — найди своего двойника по фото",
+    default: "Reflector — find your lookalike by photo",
     template: "%s · Reflector",
   },
   description:
-    "Загрузите одно фото и узнайте, на кого из миллионов людей вы похожи. Уникальные базы, лимитированные совпадения, удаление фото через 24 часа.",
+    "Upload a single photo and discover who, out of millions of people, you look like the most. Unique databases, limited matches, photos deleted after 24 hours.",
   applicationName: "Reflector",
   keywords: [
-    "поиск двойников",
-    "распознавание лиц",
+    "lookalike search",
+    "face recognition",
     "doppelganger",
-    "найти похожего",
+    "find similar face",
     "AI",
     "Reflector",
   ],
@@ -35,17 +35,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "ru_RU",
+    locale: "en_US",
     url: siteUrl,
     siteName: "Reflector",
-    title: "Reflector — найди своего двойника по фото",
+    title: "Reflector — find your lookalike by photo",
     description:
-      "Загрузите одно фото и узнайте, на кого из миллионов людей вы похожи. Удаление через 24 часа.",
+      "Upload a single photo and discover who, out of millions of people, you look like the most. Photos deleted after 24 hours.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Reflector — найди своего двойника по фото",
-    description: "Загрузите одно фото и узнайте, на кого из миллионов людей вы похожи.",
+    title: "Reflector — find your lookalike by photo",
+    description: "Upload a single photo and discover who, out of millions of people, you look like the most.",
   },
   robots: {
     index: true,
@@ -76,13 +76,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         "@type": "WebSite",
         name: "Reflector",
         url: siteUrl,
-        inLanguage: "ru-RU",
+        inLanguage: "en",
       },
     ],
   };
 
   return (
-    <html lang="ru" className={inter.variable}>
+    <html lang="en" className={inter.variable}>
       <body className="bg-brand-bg font-sans text-brand-ink antialiased">
         {children}
         <Script

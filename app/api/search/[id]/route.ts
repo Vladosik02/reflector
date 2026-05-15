@@ -12,9 +12,9 @@ export const dynamic = "force-dynamic";
 const sourcesSchema = z.array(z.enum(["public", "models", "sports", "archive"]));
 
 /**
- * Пересчитывает матчи по сохранённому photoHash и применяет текущий entitlement.
- * Используется после возврата пользователя со страницы оплаты: фронт перезапрашивает
- * /api/search/{id} и получает уже разблокированные результаты.
+ * Recomputes matches from the stored photoHash and applies the current entitlement.
+ * Used after the user returns from the payment page: the frontend re-requests
+ * /api/search/{id} and gets back the already-unlocked results.
  */
 export async function GET(
   _request: Request,
@@ -23,19 +23,19 @@ export async function GET(
   const { id } = await ctx.params;
   const sessionId = await readSessionId();
   if (!sessionId) {
-    return NextResponse.json({ error: "Сессия не инициализирована." }, { status: 401 });
+    return NextResponse.json({ error: "Session not initialised." }, { status: 401 });
   }
 
   const search = await getSearchForSession(id, sessionId);
   if (!search) {
-    return NextResponse.json({ error: "Поиск не найден." }, { status: 404 });
+    return NextResponse.json({ error: "Search not found." }, { status: 404 });
   }
 
   let sources: MatchSource[];
   try {
     sources = sourcesSchema.parse(search.sources);
   } catch {
-    return NextResponse.json({ error: "Повреждённые данные поиска." }, { status: 500 });
+    return NextResponse.json({ error: "Corrupted search data." }, { status: 500 });
   }
 
   try {
@@ -68,7 +68,7 @@ export async function GET(
   } catch (err) {
     console.error("Face match failed (search/[id])", err);
     return NextResponse.json(
-      { error: "Сервис распознавания временно недоступен. Попробуйте позже." },
+      { error: "The matching service is temporarily unavailable. Try again later." },
       { status: 502 },
     );
   }

@@ -44,13 +44,13 @@ export default function Header() {
         <a
           href="#top"
           className="flex items-center gap-2 text-brand-info"
-          aria-label={`${brandName} — на главную`}
+          aria-label={`${brandName} — home`}
         >
           <Logo />
           <span className="text-sm font-semibold tracking-tight text-white">{brandName}</span>
         </a>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Основная навигация">
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Main navigation">
           {nav.map((item) => (
             <a
               key={item.href}
@@ -67,14 +67,14 @@ export default function Header() {
             href="#upload"
             className="hidden rounded-btn bg-cta-violet px-4 py-2 text-sm font-medium text-white shadow-cta transition-all hover:-translate-y-0.5 hover:shadow-cta-hover md:inline-flex"
           >
-            Начать
+            Get started
           </a>
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-btn text-white hover:bg-brand-elevated md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
-            aria-label={open ? "Закрыть меню" : "Открыть меню"}
+            aria-label={open ? "Close menu" : "Open menu"}
             onClick={() => setOpen((v) => !v)}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -89,7 +89,7 @@ export default function Header() {
       >
         <nav
           className="mx-auto flex max-w-site flex-col gap-1 px-4 py-3"
-          aria-label="Мобильная навигация"
+          aria-label="Mobile navigation"
         >
           {nav.map((item) => (
             <a
@@ -106,7 +106,7 @@ export default function Header() {
             onClick={() => setOpen(false)}
             className="mt-2 rounded-btn bg-cta-violet px-4 py-3 text-center text-sm font-medium text-white shadow-cta"
           >
-            Начать
+            Get started
           </a>
         </nav>
       </div>
